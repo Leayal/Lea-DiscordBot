@@ -78,6 +78,8 @@ namespace LeaDiscordBot.BotWrapper
                                 ebuilder.ThumbnailUrl = this.client.CurrentUser.GetAvatarUrl();
                                 ebuilder.AddField("Version", BotVersion);
                                 ebuilder.Title = "Lea-DiscordBot";
+                                ebuilder.Url = "https://github.com/Leayal/Lea-DiscordBot/";
+                                ebuilder.AddField("Language", ".NET Core/C#");
                                 var myauthor = new EmbedAuthorBuilder();
                                 var authorObject = this.client.GetUser(164090291421184002);
                                 myauthor.Name = authorObject.Username;
@@ -115,14 +117,6 @@ namespace LeaDiscordBot.BotWrapper
                                 System.Console.WriteLine(string.Format("'{0}' (ID: {1}) ordered '{2}' but this command is not existed.", message.Author.Username, message.Author.Id, splittedMsg[0]));
                                 break;
                         }
-                    }
-
-                    // Non-command type
-                    //if (string.Compare(message.Content, "error", true) == 0)
-                    else if (lowercontext.IndexOf("error") == 0)
-                    {
-                        //Split the params out
-                        //string[] splittedMsg = message.Content.Split(new char[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
                     }
                 }
         }
