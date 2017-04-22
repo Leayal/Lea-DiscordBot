@@ -9,7 +9,6 @@ namespace LeaDiscordBot.BotWrapper
 {
     public class Bot : System.IDisposable
     {
-        public const string BotVersion = "0.0.1";
         private DiscordSocketClient client;
         private char commandPrefix;
         private ulong ownerID;
@@ -58,35 +57,19 @@ namespace LeaDiscordBot.BotWrapper
                     foreach (var mentioned in message.MentionedUsers)
                         if (mentioned.Id == this.client.CurrentUser.Id)
                         {
-                            await message.Channel.SendMessageAsync("Someone pinged me????");
+                            await message.Channel.SendMessageAsync(string.Format("How can i help you, <@{0}>???", message.Author.Id));
                             break;
                         }
                     // Command type with command prefix ????
-                    if (message.Content.IndexOf(this.commandPrefix) == 0)
+                    if (message.Content.Length > 1 && message.Content.IndexOf(this.commandPrefix) == 0)
                     {
-                        string lowercontext = message.Content.ToLower();
                         // Remove the command prefix and start to parse the command
-                        string[] splittedMsg = lowercontext.Remove(0, 1).Split(new char[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+                        string[] splittedMsg = message.Content.Remove(0, 1).Split(new char[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
                         // Someone ordered me to do something ???
-                        switch(splittedMsg[0])
+                        switch(splittedMsg[0].ToLower())
                         {
                             case "info":
-                                // Introduce myself
-                                EmbedBuilder ebuilder = new EmbedBuilder();
-                                //ebuilder.Url = "";
-                                ebuilder.Description = "Why would you want to know of me??? Just take it simple: I'm a bot.";
-                                ebuilder.ThumbnailUrl = this.client.CurrentUser.GetAvatarUrl();
-                                ebuilder.AddField("Version", BotVersion);
-                                ebuilder.Title = "Lea-DiscordBot";
-                                ebuilder.Url = "https://github.com/Leayal/Lea-DiscordBot/";
-                                ebuilder.AddField("Language", ".NET Core/C#");
-                                var myauthor = new EmbedAuthorBuilder();
-                                var authorObject = this.client.GetUser(164090291421184002);
-                                myauthor.Name = authorObject.Username;
-                                myauthor.IconUrl = authorObject.GetAvatarUrl();
-                                ebuilder.Author = myauthor;
-                                //ebuilder.
-                                await message.Channel.SendMessageAsync("", false, ebuilder.Build());
+                                await Cmds.Info.ProcessMessage(this.client, message);
                                 break;
                             case "shutdown":
                                 if (message.Author.Id == this.ownerID)
@@ -99,17 +82,7 @@ namespace LeaDiscordBot.BotWrapper
                                 }
                                 return;
                             case "error":
-                                if (splittedMsg.Length > 1)
-                                    for (int i = 1; i < splittedMsg.Length; i++)
-                                        if (NumberHelper.TryParse(splittedMsg[i], out var theCode))
-                                        {
-                                            EmbedBuilder errorExplainationbuilder = new EmbedBuilder()
-                                            {
-                                                Description = GetErrorExplaination(theCode),
-                                                Title = string.Format("Error Code: {0}", theCode)
-                                            };
-                                            await message.Channel.SendMessageAsync("", false, errorExplainationbuilder.Build());
-                                        }
+                                await Cmds.ErrorExplainer.ProcessMessage(this.client, message, splittedMsg);
                                 break;
                             //case "wiki": let the wiki come later
                                 
@@ -119,21 +92,6 @@ namespace LeaDiscordBot.BotWrapper
                         }
                     }
                 }
-        }
-
-        private string GetErrorExplaination(int errorCode)
-        {
-            switch(errorCode)
-            {
-                case 630:
-                    return "This mean your connection to the game server has been terminated due to some certain reasons.";
-                case 816:
-                    return "This mean you have been temporarily banned. Either contact SEGA or waiting for miracle. Wish best luck to you~!";
-                case 817:
-                    return "This mean you have been permanent banned. Dudu once said: \"Your luck is extraordinary terrible\".";
-                default:
-                    return "Unknown error or laiwhgliawgilawhg";
-            }
         }
 
         private async Task Client_LoggedOut()
