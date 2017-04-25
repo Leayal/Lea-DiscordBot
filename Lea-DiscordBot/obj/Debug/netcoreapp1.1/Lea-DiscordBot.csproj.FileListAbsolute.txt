@@ -1,8 +1,22 @@
+/mnt/hgfs/Lea-DiscordBot/Lea-DiscordBot/bin/Debug/netcoreapp1.1/Lea-DiscordBot.deps.json
+/mnt/hgfs/Lea-DiscordBot/Lea-DiscordBot/bin/Debug/netcoreapp1.1/Lea-DiscordBot.runtimeconfig.json
+/mnt/hgfs/Lea-DiscordBot/Lea-DiscordBot/bin/Debug/netcoreapp1.1/Lea-DiscordBot.runtimeconfig.dev.json
+/mnt/hgfs/Lea-DiscordBot/Lea-DiscordBot/bin/Debug/netcoreapp1.1/Lea-DiscordBot.dll
+/mnt/hgfs/Lea-DiscordBot/Lea-DiscordBot/bin/Debug/netcoreapp1.1/Lea-DiscordBot.pdb
+/mnt/hgfs/Lea-DiscordBot/Lea-DiscordBot/bin/Debug/netcoreapp1.1/Microsoft.IO.RecyclableMemoryStream.dll
+/mnt/hgfs/Lea-DiscordBot/Lea-DiscordBot/bin/Debug/netcoreapp1.1/Microsoft.IO.RecyclableMemoryStream.pdb
+/mnt/hgfs/Lea-DiscordBot/Lea-DiscordBot/obj/Debug/netcoreapp1.1/Lea-DiscordBot.csprojResolveAssemblyReference.cache
+/mnt/hgfs/Lea-DiscordBot/Lea-DiscordBot/obj/Debug/netcoreapp1.1/Lea-DiscordBot.AssemblyInfo.cs
+/mnt/hgfs/Lea-DiscordBot/Lea-DiscordBot/obj/Debug/netcoreapp1.1/Lea-DiscordBot.dll
+/mnt/hgfs/Lea-DiscordBot/Lea-DiscordBot/obj/Debug/netcoreapp1.1/Lea-DiscordBot.pdb
 D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\bin\Debug\netcoreapp1.1\Lea-DiscordBot.deps.json
 D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\bin\Debug\netcoreapp1.1\Lea-DiscordBot.runtimeconfig.json
 D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\bin\Debug\netcoreapp1.1\Lea-DiscordBot.runtimeconfig.dev.json
-D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\bin\Debug\netcoreapp1.1\Lea-DiscordBot.dll
 D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\obj\Debug\netcoreapp1.1\Lea-DiscordBot.AssemblyInfo.cs
+D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\bin\Debug\netcoreapp1.1\Lea-DiscordBot.dll
 D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\bin\Debug\netcoreapp1.1\Lea-DiscordBot.pdb
+D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\bin\Debug\netcoreapp1.1\Microsoft.IO.RecyclableMemoryStream.dll
+D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\bin\Debug\netcoreapp1.1\Microsoft.IO.RecyclableMemoryStream.pdb
 D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\obj\Debug\netcoreapp1.1\Lea-DiscordBot.dll
 D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\obj\Debug\netcoreapp1.1\Lea-DiscordBot.pdb
+D:\All Content\VB_Project\visual studio 2015\Lea-DiscordBot\Lea-DiscordBot\obj\Debug\netcoreapp1.1\Lea-DiscordBot.csprojResolveAssemblyReference.cache

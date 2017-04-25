@@ -9,6 +9,8 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -16,15 +18,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Images\**" />
+    <EmbeddedResource Remove="Images\**" />
+    <None Remove="Images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="bot.ini" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.0-rc" />
+    <PackageReference Include="ZKWeb.System.Drawing" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Leayal\Ini\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.IO.RecyclableMemoryStream\Microsoft.IO.RecyclableMemoryStream.csproj" />
   </ItemGroup>
 
 </Project>

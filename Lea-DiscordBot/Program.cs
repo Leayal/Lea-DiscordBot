@@ -6,6 +6,7 @@ namespace LeaDiscordBot
 {
     class Program
     {
+        public static Microsoft.IO.RecyclableMemoryStreamManager memoryMgr = new Microsoft.IO.RecyclableMemoryStreamManager();
         private static BotWrapper.Bot myBot;
         private static Leayal.Ini.IniFile _configFile;
         private static Leayal.Ini.IniFile ConfigFile
@@ -48,9 +49,12 @@ namespace LeaDiscordBot
                         else
                         {
                             string cmdPrefix = ConfigFile.GetValue("Bot", "CommandPrefix", string.Empty);
+                            string launchEQPoking = ConfigFile.GetValue("Bot", "LaunchEQAfterLogin", string.Empty);
+                            if (string.IsNullOrWhiteSpace(launchEQPoking))
+                                launchEQPoking = "1";
                             if (string.IsNullOrWhiteSpace(cmdPrefix))
                                 cmdPrefix = "'";
-                            MainAsync(cmdPrefix[0], myKey).GetAwaiter().GetResult();
+                            MainAsync(cmdPrefix, myKey, !Leayal.StringHelper.IsEqual(launchEQPoking, "0")).GetAwaiter().GetResult();
                             BlockExit(false);
                             Logout();
                             System.Threading.Thread.Sleep(500);
@@ -68,6 +72,7 @@ namespace LeaDiscordBot
                     LaunchConfigPanel();
                     break;
                 default:
+                    Console.Clear();
                     Environment.Exit(0);
                     return;
             }
@@ -86,10 +91,11 @@ namespace LeaDiscordBot
             Console.WriteLine("Choose setting:");
             Console.WriteLine("1. Set Bot token");
             Console.WriteLine("2. Set Bot prefix");
+            Console.WriteLine("3. Launch EQ Alert along with the bot");
             Console.WriteLine();
             Console.WriteLine("0. Back to main menu");
             Console.Write("Press the number without pressing enter: ");
-            ConsoleKeyInfo ki = AwaitingOrder(false, '0', '1', '2');
+            ConsoleKeyInfo ki = AwaitingOrder(false, '0', '1', '2', '3');
             switch (ki.KeyChar)
             {
                 case '0':
@@ -99,10 +105,10 @@ namespace LeaDiscordBot
                     Console.Clear();
                     Console.WriteLine("Please leave the Bot's token below and then press Enter to confirm... or press Esc to cancel:");
                     //Tricky ???
-                    StringBuilder sb = new StringBuilder();
-                    if (ConsoleReadline(sb) != null)
+                    StringBuilder sb1 = new StringBuilder();
+                    if (ConsoleReadline(sb1) != null)
                     {
-                        ConfigFile.SetValue("Bot", "Token", sb.ToString());
+                        ConfigFile.SetValue("Bot", "Token", sb1.ToString());
                         ConfigFile.Save();
                         Console.Clear();
                         Console.WriteLine("Config saved.");
@@ -114,6 +120,55 @@ namespace LeaDiscordBot
                     {
                         Console.Clear();
                         Console.WriteLine("Token settings cancelled");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    break;
+                case '3':
+                    Console.Clear();
+                    Console.WriteLine("Please Press 1 (True) or 0 (False)... or press Esc to cancel:");
+                    var key = AwaitingOrder(false, '0', '1');
+                    if (key.KeyChar == '0')
+                    {
+                        ConfigFile.SetValue("Bot", "LaunchEQAfterLogin", new string(key.KeyChar, 1));
+                        ConfigFile.Save();
+                        Console.Clear();
+                        Console.WriteLine("Config saved.");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    else
+                    {
+                        ConfigFile.SetValue("Bot", "LaunchEQAfterLogin", new string(key.KeyChar, 1));
+                        ConfigFile.Save();
+                        Console.Clear();
+                        Console.WriteLine("Config saved.");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    break;
+                case '2':
+                    Console.Clear();
+                    Console.WriteLine("Please leave the string below and then press Enter to confirm... or press Esc to cancel:");
+                    //Tricky ???
+                    StringBuilder sb3 = new StringBuilder();
+                    if (ConsoleReadline(sb3) != null)
+                    {
+                        ConfigFile.SetValue("Bot", "CommandPrefix", sb3.ToString());
+                        ConfigFile.Save();
+                        Console.Clear();
+                        Console.WriteLine("Config saved.");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Command prefix settings cancelled");
                         Console.WriteLine("Press any key to go back");
                         AwaitingOrder(false, null);
                         LaunchConfigPanel();
@@ -144,9 +199,9 @@ namespace LeaDiscordBot
             Logout();
         }
 
-        private static async Task MainAsync(char cmdPrefix, string token)
+        private static async Task MainAsync(string cmdPrefix, string token, bool launchEQPoke)
         {
-            myBot = new BotWrapper.Bot(cmdPrefix);
+            myBot = new BotWrapper.Bot(cmdPrefix, launchEQPoke);
             await myBot.Login(token);
         }
 

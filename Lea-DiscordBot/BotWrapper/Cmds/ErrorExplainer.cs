@@ -6,9 +6,10 @@ namespace LeaDiscordBot.BotWrapper.Cmds
 {
     public static class ErrorExplainer
     {
-        public static async Task ProcessMessage(DiscordSocketClient client, SocketMessage message, params string[] splittedMsg)
+        public static async Task ProcessMessage(DiscordSocketClient client, SocketMessage message, string cmdPrefix, params string[] splittedMsg)
         {
             if (splittedMsg.Length > 1)
+            {
                 for (int i = 1; i < splittedMsg.Length; i++)
                     if (Leayal.NumberHelper.TryParse(splittedMsg[i], out var theCode))
                     {
@@ -19,6 +20,16 @@ namespace LeaDiscordBot.BotWrapper.Cmds
                         };
                         await message.Channel.SendMessageAsync("", false, errorExplainationbuilder.Build());
                     }
+            }
+            else
+            {
+                await message.Channel.SendMessageAsync("```\n" + 
+                    "Usage:\n" +
+                    cmdPrefix + "error [errorCode1] [errorCode2]\n" + 
+                    "Ex:" + cmdPrefix + "error 630 816\n" +
+                    "   " + cmdPrefix + "error 817\n" +
+                    "```");
+            }
         }
 
         private static string GetErrorExplaination(int errorCode)
