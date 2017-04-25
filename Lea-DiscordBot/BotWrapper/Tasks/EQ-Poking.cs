@@ -11,6 +11,9 @@ using System.Linq;
 
 namespace LeaDiscordBot.BotWrapper.Tasks
 {
+    /// <summary>
+    /// This class is for the game Phantasy Star Online 2's EQ Notification. If you don't know about the game or no need to use this. You can use the bot settings to disable.
+    /// </summary>
     public class EQPoking
     {
         private HttpClient client;
