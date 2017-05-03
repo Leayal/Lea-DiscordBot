@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v1.1",
-    "signature": "0b5b5cfc885405d3483a2a9f3b24b2641abde8cc"
+    "signature": "c63d4b319427649a50945fb1b31250ce1f9f16f8"
   },
   "compilationOptions": {},
   "targets": {
@@ -10,7 +10,7 @@
         "dependencies": {
           "Discord.Net": "1.0.0-rc",
           "Microsoft.IO.RecyclableMemoryStream": "1.0.0",
-          "ZKWeb.System.Drawing": "2.0.1"
+          "ZKWeb.System.Drawing": "3.0.0"
         },
         "runtime": {
           "Lea-DiscordBot.dll": {}
@@ -137,7 +137,7 @@
           "lib/netstandard1.3/System.Runtime.Serialization.Primitives.dll": {}
         }
       },
-      "zkweb.system.drawing/2.0.1": {
+      "zkweb.system.drawing/3.0.0": {
         "dependencies": {
           "System.Collections.NonGeneric": "4.0.1",
           "System.Collections.Specialized": "4.0.1",
@@ -266,12 +266,12 @@
       "path": "system.runtime.serialization.primitives/4.3.0",
       "hashPath": "system.runtime.serialization.primitives.4.3.0.nupkg.sha512"
     },
-    "zkweb.system.drawing/2.0.1": {
+    "zkweb.system.drawing/3.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-HvcLPEAr2q9zVNbrFXPMmJsvRK3EBlcfboKxQFyUvgw/APy9GgqK2n33ePQH1X4dmV38Q7j76EyaX+bQkjXirg==",
-      "path": "zkweb.system.drawing/2.0.1",
-      "hashPath": "zkweb.system.drawing.2.0.1.nupkg.sha512"
+      "sha512": "sha512-sTzQ+jZr9KZmi9yH3LvK6E+GD8CHy839aRiM71oHo3bM4Xg95ksVU9pHMKxXmZu7g1NQEoM7ixarGdYauj5o5w==",
+      "path": "zkweb.system.drawing/3.0.0",
+      "hashPath": "zkweb.system.drawing.3.0.0.nupkg.sha512"
     },
     "microsoft.io.recyclablememorystream/1.0.0": {
       "type": "project",

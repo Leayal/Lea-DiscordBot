@@ -78,6 +78,7 @@ namespace LeaDiscordBot.BotWrapper.Tasks
         private async Task<Dictionary<string, object>> InnerPoking()
         {
             Dictionary<string, object> result = null;
+            // Imo, a WebSocket for this thing, for a SocketIO should be nice.
             using (var pokingresult = await this.client.GetAsync(this.PokingURL, HttpCompletionOption.ResponseHeadersRead))
                 if (pokingresult.IsSuccessStatusCode)
                 {

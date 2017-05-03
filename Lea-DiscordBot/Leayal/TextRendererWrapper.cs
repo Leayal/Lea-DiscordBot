@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Drawing;
+using System.DrawingCore;
 
 namespace Leayal
 {
@@ -10,7 +10,7 @@ namespace Leayal
     {
         internal static readonly char[] SpaceOnly = { ' ' };
 
-        public static WrapStringResult WrapString(Graphics gr, string originaltext, int preferedWidth, System.Drawing.Font _font)
+        public static WrapStringResult WrapString(Graphics gr, string originaltext, int preferedWidth, System.DrawingCore.Font _font)
         {
             if (originaltext.IndexOf("\n") > -1)
             {
@@ -35,12 +35,12 @@ namespace Leayal
                         width = Math.Max(width, re.Size.Width);
                         height = height + re.Size.Height;
                     }
-                return new WrapStringResult(sb.ToString(), new System.Drawing.SizeF(width, height));
+                return new WrapStringResult(sb.ToString(), new SizeF(width, height));
             }
             else
             {
                 List<string> _list = new List<string>();
-                System.Drawing.SizeF s = new System.Drawing.SizeF(preferedWidth, _font.Height), ss;
+                SizeF s = new SizeF(preferedWidth, _font.Height), ss;
                 StringBuilder sb = new StringBuilder(originaltext.Length);
                 bool first = true;
                 string[] splitted = originaltext.Split(SpaceOnly);
@@ -100,7 +100,7 @@ namespace Leayal
                     }
                 }
                 _list.Clear();
-                return new WrapStringResult(sb.ToString(), new System.Drawing.SizeF(_width, _height));
+                return new WrapStringResult(sb.ToString(), new SizeF(_width, _height));
             }
         }
     }

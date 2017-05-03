@@ -2546,7 +2546,7 @@
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
       },
-      "ZKWeb.System.Drawing/2.0.1": {
+      "ZKWeb.System.Drawing/3.0.0": {
         "type": "package",
         "dependencies": {
           "System.Collections.NonGeneric": "4.0.1",
@@ -7798,14 +7798,14 @@
         "system.xml.xpath.xdocument.nuspec"
       ]
     },
-    "ZKWeb.System.Drawing/2.0.1": {
-      "sha512": "HvcLPEAr2q9zVNbrFXPMmJsvRK3EBlcfboKxQFyUvgw/APy9GgqK2n33ePQH1X4dmV38Q7j76EyaX+bQkjXirg==",
+    "ZKWeb.System.Drawing/3.0.0": {
+      "sha512": "sTzQ+jZr9KZmi9yH3LvK6E+GD8CHy839aRiM71oHo3bM4Xg95ksVU9pHMKxXmZu7g1NQEoM7ixarGdYauj5o5w==",
       "type": "package",
-      "path": "zkweb.system.drawing/2.0.1",
+      "path": "zkweb.system.drawing/3.0.0",
       "files": [
         "lib/net45/ZKWeb.System.Drawing.dll",
         "lib/netstandard1.5/ZKWeb.System.Drawing.dll",
-        "zkweb.system.drawing.2.0.1.nupkg.sha512",
+        "zkweb.system.drawing.3.0.0.nupkg.sha512",
         "zkweb.system.drawing.nuspec"
       ]
     },
@@ -7820,7 +7820,7 @@
       "Discord.Net >= 1.0.0-rc",
       "Microsoft.IO.RecyclableMemoryStream >= 1.0.0",
       "Microsoft.NETCore.App >= 1.1.1",
-      "ZKWeb.System.Drawing >= 2.0.1"
+      "ZKWeb.System.Drawing >= 3.0.0"
     ]
   },
   "packageFolders": {
@@ -7857,7 +7857,7 @@
           },
           "ZKWeb.System.Drawing": {
             "target": "Package",
-            "version": "2.0.1"
+            "version": "[3.0.0, )"
           },
           "Discord.Net": {
             "target": "Package",

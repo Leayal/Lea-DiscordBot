@@ -107,10 +107,9 @@ namespace LeaDiscordBot.BotWrapper
                             await message.Channel.SendMessageAsync(string.Format("How can i help you, <@{0}>???", message.Author.Id));
                         else
                         {
-                            string lowerMsg = trimmedMentions.ToLower();
+                            //string lowerMsg = trimmedMentions.ToLower();
                             //string[] splittedMsg = trimmedMentions.Remove(0, 1).Split(new char[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
-                            if (lowerMsg.IndexOf("warn") > -1)
-                                await Orders.Warn.ProcessMessage(this._client, message);
+                            
                         }
                     }
                     // Command type with command prefix ????
@@ -148,6 +147,9 @@ namespace LeaDiscordBot.BotWrapper
                                 else
                                     await message.Channel.SendMessageAsync("Uh....Slow down~! Try to restrain yourself from spamming~!");
                                 break;
+                            case "warn":
+                                await Orders.Warn.ProcessMessage(this, message);
+                                break;
                             case "shutdown":
                                 if (message.Author.Id == this.Owner.Id)
                                 {
@@ -173,6 +175,7 @@ namespace LeaDiscordBot.BotWrapper
 
         private async Task Client_LoggedOut()
         {
+            this.poooooookkeeeee.CancelTask();
             await Task.Yield();
             System.Environment.Exit(0);
         }
