@@ -24,20 +24,30 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="BotWrapper\Orders\Warn.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="bot.ini" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="1.0.0-rc" />
-    <PackageReference Include="ZKWeb.System.Drawing" Version="3.0.0" />
+    <PackageReference Include="Discord.Net" Version="1.0.0-rc2" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="BotWrapper\Orders\" />
     <Folder Include="Leayal\Ini\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.IO.RecyclableMemoryStream\Microsoft.IO.RecyclableMemoryStream.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="src\ImageSharp\Formats\Jpeg\Components\Block8x8F.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
   </ItemGroup>
 
 </Project>

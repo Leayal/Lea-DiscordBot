@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lea-DiscordBot", "Lea-DiscordBot\Lea-DiscordBot.csproj", "{EB93078A-9118-4AF9-B9A0-A0B8A2555C9A}"
 EndProject

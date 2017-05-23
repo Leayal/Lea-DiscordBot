@@ -4,13 +4,18 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.WebSocket;
-using System.DrawingCore;
+using ImageSharp;
+using ImageSharp.Drawing;
+using SixLabors.Fonts;
 using System.Linq;
 
 namespace LeaDiscordBot.BotWrapper.Orders
 {
     public static class Warn
     {
+        private static FontCollection fonts;
+        private static FontFamily fontFamily;
+        private static Font font;
         /// <summary>
         /// Why it's so python-alike?????
         /// </summary>
@@ -19,12 +24,19 @@ namespace LeaDiscordBot.BotWrapper.Orders
         /// <returns></returns>
         public static async Task ProcessMessage(Bot self, SocketMessage message)
         {
-            string rawfilepath = Path.Combine("Images", "warn_raw.jpg");
+            if (fonts == null)
+            {
+                fonts = new FontCollection();
+                using (FileStream fs = File.OpenRead("Times_New_Roman.ttf"))
+                    fonts.Install(fs);
+                fontFamily = fonts.Families.First();
+                font = new Font(fontFamily, 15F);
+            }
+
+            string rawfilepath = Path.Combine("Images", "warn_raw.png");
             if (File.Exists(rawfilepath))
                 using (RecyclableMemoryStream memStream = new RecyclableMemoryStream(Program.memoryMgr))
                 {
-                    using (FileStream fs = File.OpenRead(rawfilepath))
-                        fs.CopyTo(memStream);
                     StringBuilder sb = new StringBuilder();
                     bool isFirstItem = true;
                     //if (self.CommandCooldown)
@@ -33,13 +45,21 @@ namespace LeaDiscordBot.BotWrapper.Orders
                         return (!user.IsBot && user.Id != self.Client.CurrentUser.Id);
                     }))
                     {
-                        if (isFirstItem)
+                        if (mentioned.Id == message.Author.Id)
                         {
-                            isFirstItem = false;
-                            sb.Append(mentioned.Username);
+                            sb.AppendFormat("Why would you want to warn yourself...? Are you a masochist, {0}????", mentioned.Username);
+                            break;
                         }
                         else
-                            sb.AppendFormat(", {0}", mentioned.Username);
+                        {
+                            if (isFirstItem)
+                            {
+                                isFirstItem = false;
+                                sb.Append(mentioned.Username);
+                            }
+                            else
+                                sb.AppendFormat(", {0}", mentioned.Username);
+                        }
                     }
                     if (string.IsNullOrWhiteSpace(sb.ToString()))
                         sb.Append("Give me a target~!");
@@ -47,17 +67,13 @@ namespace LeaDiscordBot.BotWrapper.Orders
                     {
                         sb.Insert(0, "I warn you\n");
                     }
-                    using (Image myBitMap = Bitmap.FromStream(memStream))
-                    using (Graphics gr = Graphics.FromImage(myBitMap))
-                    using (Font font = new Font("sans-serif", 15))
-                    using (RecyclableMemoryStream output = new RecyclableMemoryStream(Program.memoryMgr))
+                    Console.WriteLine(sb.ToString());
+                    using (Image<Rgba32> image = Image.Load(rawfilepath))
                     {
-                        gr.TextRenderingHint = System.DrawingCore.Text.TextRenderingHint.AntiAliasGridFit;
-                        gr.DrawString(sb.ToString(), font, Brushes.Black, new RectangleF(new PointF(229, 401), new SizeF(230, 175)));
-
-                        myBitMap.Save(output, System.DrawingCore.Imaging.ImageFormat.Jpeg);
-                        output.Position = 0;
-                        await message.Channel.SendFileAsync(output, "warning.jpg");
+                        image.DrawText(sb.ToString(), font, Rgba32.Black, new System.Numerics.Vector2(229, 401), new TextGraphicsOptions(true) { WrapTextWidth = 230, TextAlignment = TextAlignment.Left })
+                            .Save(memStream); // automatic encoder selected based on extension.
+                        memStream.Position = 0;
+                        await message.Channel.SendFileAsync(memStream, "warning.png");
                     }
                 }
             else

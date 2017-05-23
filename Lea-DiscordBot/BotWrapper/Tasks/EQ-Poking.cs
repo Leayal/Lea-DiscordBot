@@ -47,21 +47,32 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                 throw new InvalidOperationException();
             this._isbusy = true;
             this.cancelling = false;
+            bool isInMaintenance = false;
             await Task.Factory.StartNew(async delegate {
                 while (!this.cancelling)
                 {
-                    var internetResource = await this.InnerPoking();
-                    if (this.cancelling)
-                        break;
-                    if (internetResource != null)
+                    try
                     {
-                        bool isInMaintenance = (bool)internetResource["Maintenance"];
+                        var internetResource = await this.InnerPoking();
+                        if (this.cancelling)
+                            break;
+                        if (internetResource != null)
+                        {
+                            isInMaintenance = (bool)internetResource["Maintenance"];
+                            if (!isInMaintenance)
+                                this.EQDataChanged?.Invoke(this.MakeEmbed(internetResource));
+                        }
+                        if (this.cancelling)
+                            break;
                         if (!isInMaintenance)
-                            this.EQDataChanged?.Invoke(this.MakeEmbed(internetResource));
+                            await Task.Delay(this.GetFixedDelay(5));
+                        else
+                            await Task.Delay(this.GetFixedDelay(15));
                     }
-                    if (this.cancelling)
-                        break;
-                    await Task.Delay(this.GetFixedDelay());
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
                 }
                 this._isbusy = false;
             }, TaskCreationOptions.LongRunning);
@@ -208,40 +219,21 @@ namespace LeaDiscordBot.BotWrapper.Tasks
             int hour = dt.Hour;
             if (dt.Hour > 12)
                 hour = dt.Hour - 12;
-            return string.Format(":clock{0}:", hour);
+            if (hour <= 0)
+                return string.Empty;
+            else
+                return string.Format(":clock{0}:", hour);
         }
 
-        private TimeSpan GetFixedDelay()
+        private TimeSpan GetFixedDelay(int fixedMin)
         {
-            // Let's just hard-coded then
             DateTime current = DateTime.Now;
-            if (current.Minute == 0)
-                return new TimeSpan(0, 5, 0);
-            else if (current.Minute < 5)
-                return new TimeSpan(0, 5 - current.Minute, 0);
-            else if (current.Minute < 10)
-                return new TimeSpan(0, 10 - current.Minute, 0);
-            else if (current.Minute < 15)
-                return new TimeSpan(0, 15 - current.Minute, 0);
-            else if (current.Minute < 20)
-                return new TimeSpan(0, 20 - current.Minute, 0);
-            else if (current.Minute < 25)
-                return new TimeSpan(0, 25 - current.Minute, 0);
-            else if (current.Minute < 30)
-                return new TimeSpan(0, 30 - current.Minute, 0);
-            else if (current.Minute < 35)
-                return new TimeSpan(0, 35 - current.Minute, 0);
-            else if (current.Minute < 40)
-                return new TimeSpan(0, 40 - current.Minute, 0);
-            else if (current.Minute < 45)
-                return new TimeSpan(0, 45 - current.Minute, 0);
-            else if (current.Minute < 50)
-                return new TimeSpan(0, 50 - current.Minute, 0);
-            else if (current.Minute < 55)
-                return new TimeSpan(0, 55 - current.Minute, 0);
+            int solan = current.Minute / fixedMin;
+            int result = solan * fixedMin;
+            if ((solan * fixedMin) <= current.Minute)
+                return new TimeSpan(0, ((solan + 1) * fixedMin) - current.Minute, 0);
             else
-                return new TimeSpan(0, 5, 0);
-
+                return new TimeSpan(0, result - current.Minute, 0);
         }
 
         private Dictionary<string, object> FlattenJson(Stream jsonStream)

@@ -2,6 +2,7 @@
 using Discord;
 using Discord.WebSocket;
 using Leayal;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace LeaDiscordBot.BotWrapper
@@ -16,9 +17,12 @@ namespace LeaDiscordBot.BotWrapper
         private bool launchEQPoking;
         public CommandCooldown CommandCooldown { get; }
 
+        private System.Collections.Concurrent.ConcurrentDictionary<ulong, ISocketMessageChannel> eqchannelsCache;
+
         public Bot(string cmdPrefix, bool launchEQPokingOnLogin = true)
         {
             System.Console.WriteLine("Creating Bot instance");
+            this.eqchannelsCache = new System.Collections.Concurrent.ConcurrentDictionary<ulong, ISocketMessageChannel>();
             this._commandPrefix = cmdPrefix;
             this.launchEQPoking = launchEQPokingOnLogin;
             this.CommandCooldown = new CommandCooldown();
@@ -34,7 +38,8 @@ namespace LeaDiscordBot.BotWrapper
             this._client.LoggedOut += Client_LoggedOut;
             this._client.MessageReceived += Client_MessageReceived;
             this._client.Ready += Client_Ready;
-
+            this._client.JoinedGuild += Client_JoinedGuild;
+            this._client.LeftGuild += Client_LeftGuild;
             this._client.Log += Client_Log;
             //this.commander = new CommandService(new CommandServiceConfig() { CaseSensitiveCommands = false });
             this.poooooookkeeeee = new Tasks.EQPoking();
@@ -42,10 +47,61 @@ namespace LeaDiscordBot.BotWrapper
             Cmds.Help.BuildHelp(cmdPrefix);
         }
 
+        private Task Client_LeftGuild(SocketGuild arg)
+        {
+            System.Console.WriteLine($"Left server '{arg.Name}'");
+            this.eqchannelsCache.TryRemove(arg.Id, out var outfaceroll_laiwhgliahwg);
+            return Task.CompletedTask;
+        }
+
+        private Task Client_JoinedGuild(SocketGuild arg)
+        {
+            System.Console.WriteLine($"Joined server '{arg.Name}'");
+            foreach (var channelSocket in arg.Channels)
+            {
+                if (channelSocket.Name.IsEqual("eq-alert", true))
+                {
+                    ISocketMessageChannel faceroll_laiwhgliahwg = channelSocket as ISocketMessageChannel;
+                    if (faceroll_laiwhgliahwg != null)
+                    {
+                        if (!this.eqchannelsCache.TryAdd(arg.Id, faceroll_laiwhgliahwg))
+                            this.eqchannelsCache[arg.Id] = faceroll_laiwhgliahwg;
+                        break;
+                    }
+                }
+            }
+            return Task.CompletedTask;
+        }
+
         private async Task Client_Ready()
         {
             Cmds.Info.CreateInfoEmbed(this._client, this.Owner);
             await this._client.SetGameAsync(string.Format("Use {0}help for surprise.", this._commandPrefix));
+
+            foreach (var guildSocket in this._client.Guilds)
+            {
+                System.Console.WriteLine(guildSocket.Name);
+                foreach (var channelSocket in guildSocket.Channels)
+                {
+                    if (channelSocket.Name.IsEqual("eq-alert", true))
+                    {
+                        ISocketMessageChannel faceroll_laiwhgliahwg = channelSocket as ISocketMessageChannel;
+                        if (faceroll_laiwhgliahwg != null)
+                        {
+                            if (!this.eqchannelsCache.TryAdd(guildSocket.Id, faceroll_laiwhgliahwg))
+                                this.eqchannelsCache[guildSocket.Id] = faceroll_laiwhgliahwg;
+                            /*
+                            if (arg.EmbedData == null)
+                                await faceroll_laiwhgliahwg.SendMessageAsync(arg.Message);
+                            else
+                                await faceroll_laiwhgliahwg.SendMessageAsync(arg.Message, false, arg.EmbedData);
+                            //*/
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (this.launchEQPoking)
                 await this.poooooookkeeeee.StartPoking();
         }
@@ -53,20 +109,29 @@ namespace LeaDiscordBot.BotWrapper
         private async Task Poooooookkeeeee_EQDataChanged(Tasks.EQPoking.EQPostBlock arg)
         {
             if (string.IsNullOrWhiteSpace(arg.Message) && arg.EmbedData == null) return;
-            foreach (var guildSocket in this._client.Guilds)
-                foreach (var channelSocket in guildSocket.Channels)
-                    if (channelSocket.Name.IsEqual("eq-alert", true))
+            foreach (var channel in this.eqchannelsCache.Values)
+            {
+                await channel.SendMessageAsync(arg.Message);
+            }
+        }
+
+        private async Task ThrowEQMsg(SocketGuild server, Tasks.EQPoking.EQPostBlock arg)
+        {
+            foreach (var channelSocket in server.Channels)
+                if (channelSocket.Name.IsEqual("eq-alert", true))
+                {
+                    ISocketMessageChannel faceroll_laiwhgliahwg = channelSocket as ISocketMessageChannel;
+                    if (faceroll_laiwhgliahwg != null)
                     {
-                        ISocketMessageChannel faceroll_laiwhgliahwg = channelSocket as ISocketMessageChannel;
-                        if (faceroll_laiwhgliahwg != null)
-                        {
-                            if (arg.EmbedData == null)
-                                await faceroll_laiwhgliahwg.SendMessageAsync(arg.Message);
-                            else
-                                await faceroll_laiwhgliahwg.SendMessageAsync(arg.Message, false, arg.EmbedData);
-                            break;
-                        }
+                        await faceroll_laiwhgliahwg.SendMessageAsync(arg.Message);
+                        /*
+                        if (arg.EmbedData == null)
+                            await faceroll_laiwhgliahwg.SendMessageAsync(arg.Message);
+                        else
+                            await faceroll_laiwhgliahwg.SendMessageAsync(arg.Message, false, arg.EmbedData);
+                        //*/
                     }
+                }
         }
 
         public IUser Owner { get; protected set; }
@@ -147,9 +212,9 @@ namespace LeaDiscordBot.BotWrapper
                                 else
                                     await message.Channel.SendMessageAsync("Uh....Slow down~! Try to restrain yourself from spamming~!");
                                 break;
-                            case "warn":
+                            /*case "warn":
                                 await Orders.Warn.ProcessMessage(this, message);
-                                break;
+                                break;//*/
                             case "shutdown":
                                 if (message.Author.Id == this.Owner.Id)
                                 {

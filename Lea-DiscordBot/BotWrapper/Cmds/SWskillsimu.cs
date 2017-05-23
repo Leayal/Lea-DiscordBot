@@ -9,7 +9,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
     {
         public static async Task ProcessMessage(DiscordSocketClient client, SocketMessage message)
         {
-            await message.Channel.SendMessageAsync("https://leayal.github.io/swskillsimu/");
+            await message.Channel.SendMessageAsync("https://swskillsim.leayal.tk/");
 
             /*var dmChannel = await message.Author.CreateDMChannelAsync();
             await dmChannel.SendMessageAsync(sb.ToString(), false, ebuilder.Build());
