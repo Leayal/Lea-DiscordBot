@@ -78,9 +78,10 @@ namespace LeaDiscordBot.BotWrapper
             Cmds.Info.CreateInfoEmbed(this._client, this.Owner);
             await this._client.SetGameAsync(string.Format("Use {0}help for surprise.", this._commandPrefix));
 
+            System.Console.WriteLine($"Currently this bot is in {this._client.Guilds.Count} guilds.");
+
             foreach (var guildSocket in this._client.Guilds)
             {
-                System.Console.WriteLine(guildSocket.Name);
                 foreach (var channelSocket in guildSocket.Channels)
                 {
                     if (channelSocket.Name.IsEqual("eq-alert", true))
@@ -110,9 +111,14 @@ namespace LeaDiscordBot.BotWrapper
         {
             if (string.IsNullOrWhiteSpace(arg.Message) && arg.EmbedData == null) return;
             foreach (var channel in this.eqchannelsCache.Values)
-            {
-                await channel.SendMessageAsync(arg.Message);
-            }
+                try
+                {
+                    Task returnTask = channel.SendMessageAsync(arg.Message);
+                    await returnTask;
+                    if (returnTask.Exception != null)
+                        System.Console.WriteLine(returnTask.Exception.ToString());
+                }
+                catch (System.Exception ex) { System.Console.WriteLine(ex.ToString()); }
         }
 
         private async Task ThrowEQMsg(SocketGuild server, Tasks.EQPoking.EQPostBlock arg)
@@ -142,6 +148,7 @@ namespace LeaDiscordBot.BotWrapper
             var myInfo = await _client.GetApplicationInfoAsync();
             System.Console.WriteLine(string.Format("Owner: {0}{1}", myInfo.Owner.Username, string.IsNullOrEmpty(myInfo.Owner.Discriminator) ? string.Empty : "#" + myInfo.Owner.Discriminator));
             this.Owner = myInfo.Owner;
+            Cmds.PSO2ProxyWhitelist.allowedUsers.TryAdd(this.Owner.Id, this.Owner.Username);
             await Task.Yield();
         }
 
@@ -215,6 +222,58 @@ namespace LeaDiscordBot.BotWrapper
                             /*case "warn":
                                 await Orders.Warn.ProcessMessage(this, message);
                                 break;//*/
+                            case "whitelist":
+                                if (splittedMsg.Length > 2)
+                                {
+                                    switch (splittedMsg[1].ToLower())
+                                    {
+                                        case "add":
+                                            if (splittedMsg.Length > 3)
+                                            {
+                                                if (await Cmds.PSO2ProxyWhitelist.Add(message, splittedMsg.Skip(2)))
+                                                    await message.Channel.SendMessageAsync($"Added '{splittedMsg.Skip(2).Join(",")}' from PSO2Proxy's whitelist.");
+                                            }
+                                            else
+                                            {
+                                                if (await Cmds.PSO2ProxyWhitelist.Add(message, splittedMsg[2]))
+                                                    await message.Channel.SendMessageAsync($"Added '{splittedMsg[2]}' from PSO2Proxy's whitelist.");
+                                            }
+                                            break;
+                                        case "remove":
+                                            if (splittedMsg.Length > 3)
+                                            {
+                                                if (await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg.Skip(2)))
+                                                    await message.Channel.SendMessageAsync($"Removed '{splittedMsg.Skip(2).Join(",")}' from PSO2Proxy's whitelist.");
+                                            }
+                                            else
+                                            {
+                                                if (await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg[2]))
+                                                    await message.Channel.SendMessageAsync($"Removed '{splittedMsg[2]}' from PSO2Proxy's whitelist.");
+                                            }
+                                            break;
+                                        case "del":
+                                            if (splittedMsg.Length > 3)
+                                            {
+                                                if (await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg.Skip(2)))
+                                                    await message.Channel.SendMessageAsync($"Removed '{splittedMsg.Skip(2).Join(",")}' from PSO2Proxy's whitelist.");
+                                            }
+                                            else
+                                            {
+                                                if (await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg[2]))
+                                                    await message.Channel.SendMessageAsync($"Removed '{splittedMsg[2]}' from PSO2Proxy's whitelist.");
+                                            }
+                                            break;
+                                        case "allow":
+                                            if (await Cmds.PSO2ProxyWhitelist.Allow(this, message))
+                                                await message.Channel.SendMessageAsync("Allowed mentioned users from PSO2Proxy's whitelist permission.");
+                                            break;
+                                        case "disallow":
+                                            if (await Cmds.PSO2ProxyWhitelist.Disallow(this, message))
+                                                await message.Channel.SendMessageAsync("Disallowed mentioned users from PSO2Proxy's whitelist permission.");
+                                            break;
+                                    }
+                                }
+                                break;
                             case "shutdown":
                                 if (message.Author.Id == this.Owner.Id)
                                 {

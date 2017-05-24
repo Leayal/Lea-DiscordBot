@@ -23,6 +23,36 @@ namespace Leayal
             return result;
         }
 
+        public static string Join(this IEnumerable<string> strarray, string delimiter)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            bool first = true;
+            foreach (string str in strarray)
+            {
+                if (first)
+                {
+                    first = false;
+                    sb.Append(str);
+                }
+                else
+                    sb.AppendFormat("{0} {1}", delimiter, str);
+            }
+            return sb.ToString();
+        }
+
+        public static string Join(this string[] strarray, string delimiter)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            for (int i = 0; i< strarray.Length;i++)
+            {
+                if (i == 0)
+                    sb.Append(strarray[i]);
+                else
+                    sb.AppendFormat("{0} {1}", delimiter, strarray[i]);
+            }
+            return sb.ToString();
+        }
+
         public unsafe static int ToInt(this string str)
         {
             return ToInt(str, true);
