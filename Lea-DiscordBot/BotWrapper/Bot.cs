@@ -229,47 +229,27 @@ namespace LeaDiscordBot.BotWrapper
                                     {
                                         case "add":
                                             if (splittedMsg.Length > 3)
-                                            {
-                                                if (await Cmds.PSO2ProxyWhitelist.Add(message, splittedMsg.Skip(2)))
-                                                    await message.Channel.SendMessageAsync($"Added '{splittedMsg.Skip(2).Join(",")}' from PSO2Proxy's whitelist.");
-                                            }
+                                                await Cmds.PSO2ProxyWhitelist.Add(message, splittedMsg.Skip(2));
                                             else
-                                            {
-                                                if (await Cmds.PSO2ProxyWhitelist.Add(message, splittedMsg[2]))
-                                                    await message.Channel.SendMessageAsync($"Added '{splittedMsg[2]}' from PSO2Proxy's whitelist.");
-                                            }
+                                                await Cmds.PSO2ProxyWhitelist.Add(message, splittedMsg[2]);
                                             break;
                                         case "remove":
                                             if (splittedMsg.Length > 3)
-                                            {
-                                                if (await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg.Skip(2)))
-                                                    await message.Channel.SendMessageAsync($"Removed '{splittedMsg.Skip(2).Join(",")}' from PSO2Proxy's whitelist.");
-                                            }
+                                                await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg.Skip(2));
                                             else
-                                            {
-                                                if (await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg[2]))
-                                                    await message.Channel.SendMessageAsync($"Removed '{splittedMsg[2]}' from PSO2Proxy's whitelist.");
-                                            }
+                                                await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg[2]);
                                             break;
                                         case "del":
                                             if (splittedMsg.Length > 3)
-                                            {
-                                                if (await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg.Skip(2)))
-                                                    await message.Channel.SendMessageAsync($"Removed '{splittedMsg.Skip(2).Join(",")}' from PSO2Proxy's whitelist.");
-                                            }
+                                                await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg.Skip(2));
                                             else
-                                            {
-                                                if (await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg[2]))
-                                                    await message.Channel.SendMessageAsync($"Removed '{splittedMsg[2]}' from PSO2Proxy's whitelist.");
-                                            }
+                                                await Cmds.PSO2ProxyWhitelist.Remove(message, splittedMsg[2]);
                                             break;
                                         case "allow":
-                                            if (await Cmds.PSO2ProxyWhitelist.Allow(this, message))
-                                                await message.Channel.SendMessageAsync("Allowed mentioned users from PSO2Proxy's whitelist permission.");
+                                            await Cmds.PSO2ProxyWhitelist.Allow(this, message);
                                             break;
                                         case "disallow":
-                                            if (await Cmds.PSO2ProxyWhitelist.Disallow(this, message))
-                                                await message.Channel.SendMessageAsync("Disallowed mentioned users from PSO2Proxy's whitelist permission.");
+                                            await Cmds.PSO2ProxyWhitelist.Disallow(this, message);
                                             break;
                                     }
                                 }

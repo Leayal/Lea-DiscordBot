@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Leayal;
 
 namespace LeaDiscordBot.BotWrapper.Cmds
 {
@@ -40,123 +41,155 @@ namespace LeaDiscordBot.BotWrapper.Cmds
             return allowedUsers.ContainsKey(target.Id);
         }
 
-        public async static Task<bool> Allow(Bot self, SocketMessage message)
+        public async static Task Allow(Bot self, SocketMessage message)
         {
-            if (!IsAllowed(message.Author)) return false;
-            bool bump = false;
-            foreach (var mention in message.MentionedUsers.Where((mentioned) => { return (!mentioned.IsBot && (mentioned.Id != self.Owner.Id)); }))
+            if (!IsAllowed(message.Author))
+                await message.Channel.SendMessageAsync("You don't have permission to use this command.");
+            else
             {
-                if (!bump)
-                    bump = allowedUsers.TryAdd(mention.Id, mention.Username);
-                else
-                    allowedUsers.TryAdd(mention.Id, mention.Username);
-            }
-            if (bump)
-                using (var fs = new FileStream(WhiteListMods, FileMode.Create))
-                using (var sw = new StreamWriter(fs))
+                bool bump = false;
+                foreach (var mention in message.MentionedUsers.Where((mentioned) => { return (!mentioned.IsBot && (mentioned.Id != self.Owner.Id)); }))
                 {
-                    foreach (ulong id in allowedUsers.Keys)
-                        await sw.WriteLineAsync(id.ToString());
-                    await sw.FlushAsync();
+                    if (!bump)
+                        bump = allowedUsers.TryAdd(mention.Id, mention.Username);
+                    else
+                        allowedUsers.TryAdd(mention.Id, mention.Username);
                 }
-            return bump;
-        }
-
-        public async static Task<bool> Disallow(Bot self, SocketMessage message)
-        {
-            if (!IsAllowed(message.Author)) return false;
-            bool bump = false;
-            string target = null;
-            foreach (var mention in message.MentionedUsers.Where((mentioned) => { return (!mentioned.IsBot && (mentioned.Id != self.Owner.Id)); }))
-            {
-                if (!bump)
-                    bump = allowedUsers.TryRemove(mention.Id, out target);
-                else
-                    allowedUsers.TryRemove(mention.Id, out target);
-            }
-            if (bump)
-                using (var fs = new FileStream(WhiteListMods, FileMode.Create))
-                using (var sw = new StreamWriter(fs))
+                if (bump)
                 {
-                    foreach (ulong id in allowedUsers.Keys)
-                        await sw.WriteLineAsync(id.ToString());
-                    await sw.FlushAsync();
-                }
-            return bump;
-        }
-
-        public async static Task<bool> Add(SocketMessage message, IEnumerable<string> usernames)
-        {
-            if (!IsAllowed(message.Author)) return false;
-            if (File.Exists(WhiteListFilename))
-            {
-                bool success = false;
-                JArray jt;
-                using (var fs = new FileStream(WhiteListFilename, FileMode.Open))
-                using (var sr = new StreamReader(fs))
-                using (var stream = new Newtonsoft.Json.JsonTextReader(sr))
-                {
-                    jt = JArray.Load(stream);
-                    foreach (string username in usernames)
-                    {
-                        if (!success)
-                            success = Add(jt, username);
-                        else
-                            Add(jt, username);
-                    }
-                }
-                if (success)
-                {
-                    using (var fs = new FileStream(WhiteListFilename, FileMode.Create))
+                    using (var fs = new FileStream(WhiteListMods, FileMode.Create))
                     using (var sw = new StreamWriter(fs))
-                    using (var stream = new Newtonsoft.Json.JsonTextWriter(sw))
                     {
-                        await jt.WriteToAsync(stream);
-                        await stream.FlushAsync();
+                        foreach (ulong id in allowedUsers.Keys)
+                            await sw.WriteLineAsync(id.ToString());
+                        await sw.FlushAsync();
                     }
+                    await message.Channel.SendMessageAsync("Allowed mentioned users from PSO2Proxy's whitelist permission.");
                 }
-                return success;
+                else
+                    await message.Channel.SendMessageAsync("None of mentioned user was needed to be added to permission list.");
+            }
+        }
+
+        public async static Task Disallow(Bot self, SocketMessage message)
+        {
+            if (!IsAllowed(message.Author))
+                await message.Channel.SendMessageAsync("You don't have permission to use this command.");
+            else
+            {
+                bool bump = false;
+                string target = null;
+                foreach (var mention in message.MentionedUsers.Where((mentioned) => { return (!mentioned.IsBot && (mentioned.Id != self.Owner.Id)); }))
+                {
+                    if (!bump)
+                        bump = allowedUsers.TryRemove(mention.Id, out target);
+                    else
+                        allowedUsers.TryRemove(mention.Id, out target);
+                }
+                if (bump)
+                {
+                    using (var fs = new FileStream(WhiteListMods, FileMode.Create))
+                    using (var sw = new StreamWriter(fs))
+                    {
+                        foreach (ulong id in allowedUsers.Keys)
+                            await sw.WriteLineAsync(id.ToString());
+                        await sw.FlushAsync();
+                    }
+                    await message.Channel.SendMessageAsync("Removed mentioned users from PSO2Proxy's whitelist permission.");
+                }
+                else
+                    await message.Channel.SendMessageAsync("None of mentioned user was found in permission list.");
+            }
+        }
+
+        public async static Task Add(SocketMessage message, IEnumerable<string> usernames)
+        {
+            if (!IsAllowed(message.Author))
+            {
+                await message.Channel.SendMessageAsync("You don't have permission to use this command.");
             }
             else
-                return false;
-        }
-
-        public async static Task<bool> Add(SocketMessage message, params string[] usernames)
-        {
-            if (!IsAllowed(message.Author)) return false;
-            if (File.Exists(WhiteListFilename))
             {
-                bool success = false;
-                JArray jt;
-                using (var fs = new FileStream(WhiteListFilename, FileMode.Open))
-                using (var sr = new StreamReader(fs))
-                using (var stream = new Newtonsoft.Json.JsonTextReader(sr))
+                if (File.Exists(WhiteListFilename))
                 {
-                    jt = JArray.Load(stream);
-                    for (int i = 0; i < usernames.Length; i++)
+                    bool success = false;
+                    JArray jt;
+                    using (var fs = new FileStream(WhiteListFilename, FileMode.Open))
+                    using (var sr = new StreamReader(fs))
+                    using (var stream = new Newtonsoft.Json.JsonTextReader(sr))
                     {
+                        jt = JArray.Load(stream);
+                        foreach (string username in usernames)
                         {
                             if (!success)
-                                success = Add(jt, usernames[i]);
+                                success = Add(jt, username);
                             else
-                                Add(jt, usernames[i]);
+                                Add(jt, username);
                         }
                     }
-                }
-                if (success)
-                {
-                    using (var fs = new FileStream(WhiteListFilename, FileMode.Create))
-                    using (var sw = new StreamWriter(fs))
-                    using (var stream = new Newtonsoft.Json.JsonTextWriter(sw))
+                    if (success)
                     {
-                        await jt.WriteToAsync(stream);
-                        await stream.FlushAsync();
+                        using (var fs = new FileStream(WhiteListFilename, FileMode.Create))
+                        using (var sw = new StreamWriter(fs))
+                        using (var stream = new Newtonsoft.Json.JsonTextWriter(sw))
+                        {
+                            await jt.WriteToAsync(stream);
+                            await stream.FlushAsync();
+                        }
+                        await message.Channel.SendMessageAsync($"Added '{usernames.Join(",")}' from PSO2Proxy's whitelist.");
                     }
+                    else
+                        await message.Channel.SendMessageAsync("None of mentioned user was needed to be added to whitelist.");
                 }
-                return success;
+                else
+                    System.Console.WriteLine("PSO2Proxy's whitelist config file not found.");
+            }
+        }
+
+        public async static Task Add(SocketMessage message, params string[] usernames)
+        {
+            if (!IsAllowed(message.Author))
+            {
+                await message.Channel.SendMessageAsync("You don't have permission to use this command.");
             }
             else
-                return false;
+            {
+                if (File.Exists(WhiteListFilename))
+                {
+                    bool success = false;
+                    JArray jt;
+                    using (var fs = new FileStream(WhiteListFilename, FileMode.Open))
+                    using (var sr = new StreamReader(fs))
+                    using (var stream = new Newtonsoft.Json.JsonTextReader(sr))
+                    {
+                        jt = JArray.Load(stream);
+                        for (int i = 0; i < usernames.Length; i++)
+                        {
+                            {
+                                if (!success)
+                                    success = Add(jt, usernames[i]);
+                                else
+                                    Add(jt, usernames[i]);
+                            }
+                        }
+                    }
+                    if (success)
+                    {
+                        using (var fs = new FileStream(WhiteListFilename, FileMode.Create))
+                        using (var sw = new StreamWriter(fs))
+                        using (var stream = new Newtonsoft.Json.JsonTextWriter(sw))
+                        {
+                            await jt.WriteToAsync(stream);
+                            await stream.FlushAsync();
+                        }
+                        await message.Channel.SendMessageAsync($"Added '{usernames.Join(",")}' from PSO2Proxy's whitelist.");
+                    }
+                    else
+                        await message.Channel.SendMessageAsync("None of mentioned user was needed to be added to whitelist.");
+                }
+                else
+                    System.Console.WriteLine("PSO2Proxy's whitelist config file not found.");
+            }
         }
 
         private static bool Add(JArray jsonOjbect, string username)
@@ -171,78 +204,94 @@ namespace LeaDiscordBot.BotWrapper.Cmds
                 return false;
         }
 
-        public async static Task<bool> Remove(SocketMessage message, IEnumerable< string > usernames)
+        public async static Task Remove(SocketMessage message, IEnumerable< string > usernames)
         {
-            if (!IsAllowed(message.Author)) return false;
-            if (File.Exists(WhiteListFilename))
+            if (!IsAllowed(message.Author))
             {
-                bool success = false;
-                JArray jt;
-                using (var fs = new FileStream(WhiteListFilename, FileMode.Open))
-                using (var sr = new StreamReader(fs))
-                using (var stream = new Newtonsoft.Json.JsonTextReader(sr))
-                {
-                    jt = await JArray.LoadAsync(stream);
-                    foreach (string username in usernames)
-                    {
-                        if (!success)
-                            success = Remove(jt, username);
-                        else
-                            Remove(jt, username);
-                    }
-                }
-                if (success)
-                {
-                    using (var fs = new FileStream(WhiteListFilename, FileMode.Create))
-                    using (var sw = new StreamWriter(fs))
-                    using (var stream = new Newtonsoft.Json.JsonTextWriter(sw))
-                    {
-                        await jt.WriteToAsync(stream);
-                        await stream.FlushAsync();
-                    }
-                }
-                return success;
+                await message.Channel.SendMessageAsync("You don't have permission to use this command.");
             }
             else
-                return false;
-        }
-
-        public async static Task<bool> Remove(SocketMessage message, params string[] usernames)
-        {
-            if (!IsAllowed(message.Author)) return false;
-            if (File.Exists(WhiteListFilename))
             {
-                bool success = false;
-                JArray jt;
-                using (var fs = new FileStream(WhiteListFilename, FileMode.Open))
-                using (var sr = new StreamReader(fs))
-                using (var stream = new Newtonsoft.Json.JsonTextReader(sr))
+                if (File.Exists(WhiteListFilename))
                 {
-                    jt = await JArray.LoadAsync(stream);
-                    for (int i = 0; i < usernames.Length; i++)
+                    bool success = false;
+                    JArray jt;
+                    using (var fs = new FileStream(WhiteListFilename, FileMode.Open))
+                    using (var sr = new StreamReader(fs))
+                    using (var stream = new Newtonsoft.Json.JsonTextReader(sr))
                     {
+                        jt = await JArray.LoadAsync(stream);
+                        foreach (string username in usernames)
                         {
                             if (!success)
-                                success = Remove(jt, usernames[i]);
+                                success = Remove(jt, username);
                             else
-                                Remove(jt, usernames[i]);
+                                Remove(jt, username);
                         }
                     }
-                }
-                if (success)
-                {
-                    using (var fs = new FileStream(WhiteListFilename, FileMode.Create))
-                    using (var sw = new StreamWriter(fs))
-                    using (var stream = new Newtonsoft.Json.JsonTextWriter(sw))
+                    if (success)
                     {
-                        await jt.WriteToAsync(stream);
-                        await stream.FlushAsync();
+                        using (var fs = new FileStream(WhiteListFilename, FileMode.Create))
+                        using (var sw = new StreamWriter(fs))
+                        using (var stream = new Newtonsoft.Json.JsonTextWriter(sw))
+                        {
+                            await jt.WriteToAsync(stream);
+                            await stream.FlushAsync();
+                        }
+                        await message.Channel.SendMessageAsync($"Removed '{usernames.Join(",")}' from PSO2Proxy's whitelist.");
                     }
+                    else
+                        await message.Channel.SendMessageAsync("None of mentioned user was found in list.");
                 }
-                return success;
+                else
+                    System.Console.WriteLine("PSO2Proxy's whitelist config file not found.");
+            }
+        }
+
+        public async static Task Remove(SocketMessage message, params string[] usernames)
+        {
+            if (!IsAllowed(message.Author))
+            {
+                await message.Channel.SendMessageAsync("You don't have permission to use this command.");
             }
             else
-                return false;
+            {
+                if (File.Exists(WhiteListFilename))
+                {
+                    bool success = false;
+                    JArray jt;
+                    using (var fs = new FileStream(WhiteListFilename, FileMode.Open))
+                    using (var sr = new StreamReader(fs))
+                    using (var stream = new Newtonsoft.Json.JsonTextReader(sr))
+                    {
+                        jt = await JArray.LoadAsync(stream);
+                        for (int i = 0; i < usernames.Length; i++)
+                        {
+                            {
+                                if (!success)
+                                    success = Remove(jt, usernames[i]);
+                                else
+                                    Remove(jt, usernames[i]);
+                            }
+                        }
+                    }
+                    if (success)
+                    {
+                        using (var fs = new FileStream(WhiteListFilename, FileMode.Create))
+                        using (var sw = new StreamWriter(fs))
+                        using (var stream = new Newtonsoft.Json.JsonTextWriter(sw))
+                        {
+                            await jt.WriteToAsync(stream);
+                            await stream.FlushAsync();
+                        }
+                        await message.Channel.SendMessageAsync($"Removed '{usernames.Join(",")}' from PSO2Proxy's whitelist.");
+                    }
+                    else
+                        await message.Channel.SendMessageAsync("None of mentioned user was found in list.");
+                }
+                else
+                    System.Console.WriteLine("PSO2Proxy's whitelist config file not found.");
+            }
         }
 
         private static bool Remove(JArray jsonOjbect, string username)
