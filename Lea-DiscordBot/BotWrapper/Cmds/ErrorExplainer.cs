@@ -38,6 +38,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
             public string Explaination { get; }
             public string ErrorCode { get; }
 
+            public ErrorExplaination(int code, string explain) : this(code.ToString(), explain) { }
             public ErrorExplaination(string code, string explain)
             {
                 this.Explaination = explain;
@@ -50,11 +51,15 @@ namespace LeaDiscordBot.BotWrapper.Cmds
             switch (errorCode)
             {
                 case 630:
-                    return new ErrorExplaination(errorCode.ToString(), "This mean your connection to the game server has been terminated due to some certain reasons.");
+                    return new ErrorExplaination(errorCode, "This mean your connection to the game server has been terminated due to some certain reasons.");
                 case 816:
-                    return new ErrorExplaination(errorCode.ToString(), "This mean you have been temporarily banned. Either contact SEGA or waiting for miracle. Wish best luck to you~!");
+                    return new ErrorExplaination(errorCode, "This mean you have been temporarily banned. Either contact SEGA or waiting for miracle. Wish best luck to you~!");
                 case 817:
-                    return new ErrorExplaination(errorCode.ToString(), "This mean you have been permanent banned. Dudu once said: \"Your luck is extraordinary terrible\".");
+                    return new ErrorExplaination(errorCode, "This mean you have been permanent banned. Dudu once said: \"Your luck is extraordinary terrible\".");
+                case 650:
+                    return new ErrorExplaination(errorCode, "This mean the login session require authorize code from the Email which registered the account. Go to your email and copy the authorize code.");
+                case 674:
+                    return new ErrorExplaination(errorCode, "This mean you have input the wrong login information. Check you intput method and try again.");
                 default:
                     if (errorCode > 0)
                     {
@@ -65,7 +70,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
                         else if (errorCode < 500) return new ErrorExplaination("4xx", "Unknown.");
                         else if (errorCode < 600) return new ErrorExplaination("5xx", "Unknown.");
                         else if (errorCode < 700)
-                            return new ErrorExplaination("6xx", "The error 6xx seem to be related to connection issues.");
+                            return new ErrorExplaination("6xx", "The error 6xx seem to be related to connection issues or authorize issues.");
                         else if (errorCode < 800) return new ErrorExplaination("7xx", "Unknown.");
                         else if (errorCode < 900)
                             return new ErrorExplaination("8xx", "The error 8xx seem to be related to account issues.");

@@ -58,6 +58,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
                 if (bump)
                 {
                     using (var fs = new FileStream(WhiteListMods, FileMode.Create))
+                    using (var sw1 = new StreamWriter(fs))
                     using (var sw = new StreamWriter(fs))
                     {
                         foreach (ulong id in allowedUsers.Keys)
