@@ -50,6 +50,8 @@ namespace LeaDiscordBot.BotWrapper.Cmds
         {
             switch (errorCode)
             {
+                case 249:
+                    return new ErrorExplaination(errorCode, "This mean your client cannot establish connection to the server due to some certain reasons.");
                 case 630:
                     return new ErrorExplaination(errorCode, "This mean your connection to the game server has been terminated due to some certain reasons.");
                 case 816:

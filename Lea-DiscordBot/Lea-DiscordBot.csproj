@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="1.0.0-rc2" />
+    <PackageReference Include="Discord.Net" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

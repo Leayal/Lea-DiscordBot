@@ -23,6 +23,12 @@ namespace LeaDiscordBot.BotWrapper.Tasks
         private bool _isbusy;
         public bool IsRunning { get { return this._isbusy; } }
 
+        private static class FixedDlay
+        {
+            public const int WhenNormal = 5;
+            public const int WhenMaintenance = 5;
+        }
+
         public EQPoking()
         {
             this._isbusy = false;
@@ -47,16 +53,18 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                 throw new InvalidOperationException();
             this._isbusy = true;
             this.cancelling = false;
-            bool isInMaintenance = false;
+            
             await Task.Factory.StartNew(async delegate {
+                bool isInMaintenance = false;
+                Dictionary<string, object> internetResource;
                 while (!this.cancelling)
                 {
                     try
                     {
-                        var internetResource = await this.InnerPoking();
+                        internetResource = await this.InnerPoking();
                         if (this.cancelling)
                             break;
-                        if (internetResource != null)
+                        if (internetResource != null && internetResource.Count > 0)
                         {
                             isInMaintenance = (bool)internetResource["Maintenance"];
                             if (!isInMaintenance)
@@ -65,9 +73,9 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                         if (this.cancelling)
                             break;
                         if (!isInMaintenance)
-                            await Task.Delay(this.GetFixedDelay(5));
+                            await Task.Delay(this.GetFixedDelay(FixedDlay.WhenNormal));
                         else
-                            await Task.Delay(this.GetFixedDelay(15));
+                            await Task.Delay(this.GetFixedDelay(FixedDlay.WhenMaintenance));
                     }
                     catch (Exception ex)
                     {
@@ -90,16 +98,28 @@ namespace LeaDiscordBot.BotWrapper.Tasks
         {
             Dictionary<string, object> result = null;
             // Imo, a WebSocket for this thing, for a SocketIO should be nice.
-            using (var pokingresult = await this.client.GetAsync(this.PokingURL, HttpCompletionOption.ResponseHeadersRead))
-                if (pokingresult.IsSuccessStatusCode)
+            Task<HttpResponseMessage> pokingresult = this.client.GetAsync(this.PokingURL, HttpCompletionOption.ResponseHeadersRead);
+            HttpResponseMessage rep = await pokingresult;
+            if (pokingresult.IsFaulted)
+                throw pokingresult.Exception;
+            else if (pokingresult.IsCanceled)
+            {
+                await Task.Delay(1000);
+                return await this.InnerPoking();
+            }
+            else if (pokingresult.IsCompleted)
+            {
+                // HttpResponseMessage rep = pokingresult.Result;
+
+                if (rep.IsSuccessStatusCode)
                 {
-                    if (pokingresult.Content.Headers.LastModified.HasValue)
+                    if (rep.Content.Headers.LastModified.HasValue)
                     {
-                        if (pokingresult.Content.Headers.LastModified.Value.UtcDateTime != this.lastPokingStamp)
+                        if (rep.Content.Headers.LastModified.Value.UtcDateTime != this.lastPokingStamp)
                         {
-                            this.lastPokingStamp = pokingresult.Content.Headers.LastModified.Value.UtcDateTime;
+                            this.lastPokingStamp = rep.Content.Headers.LastModified.Value.UtcDateTime;
                             // We may not even need the JObject
-                            using (var stream = await pokingresult.Content.ReadAsStreamAsync())
+                            using (var stream = await rep.Content.ReadAsStreamAsync())
                                 result = this.FlattenJson(stream);
                             /* bool hasAnyValue = flattenJson
                                 .Where((_keypair)=> { return (_keypair.Key != "JST" && _keypair.Key != "Maintenance"); })
@@ -107,9 +127,10 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                         }
                     }
                     else
-                        using (var stream = await pokingresult.Content.ReadAsStreamAsync())
+                        using (var stream = await rep.Content.ReadAsStreamAsync())
                             result = this.FlattenJson(stream);
                 }
+            }
             return result;
         }
 
