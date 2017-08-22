@@ -57,7 +57,6 @@ namespace LeaDiscordBot
                             MainAsync(cmdPrefix, myKey, !Leayal.StringHelper.IsEqual(launchEQPoking, "0")).GetAwaiter().GetResult();
                             BlockExit(false);
                             Logout();
-                            System.Threading.Thread.Sleep(500);
                         }
                     }
                     catch (Exception ex)

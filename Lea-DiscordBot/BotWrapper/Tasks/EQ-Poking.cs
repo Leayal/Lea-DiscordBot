@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Threading;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -14,7 +14,7 @@ namespace LeaDiscordBot.BotWrapper.Tasks
     /// <summary>
     /// This class is for the game Phantasy Star Online 2's EQ Notification. If you don't know about the game or no need to use this. You can use the bot settings to disable.
     /// </summary>
-    public class EQPoking
+    public class EQPoking : IDisposable
     {
         private HttpClient client;
         public Uri PokingURL { get; set; }
@@ -22,11 +22,12 @@ namespace LeaDiscordBot.BotWrapper.Tasks
         private bool cancelling;
         private bool _isbusy;
         public bool IsRunning { get { return this._isbusy; } }
+        private Timer myTimer;
 
         private static class FixedDlay
         {
-            public const int WhenNormal = 5;
-            public const int WhenMaintenance = 5;
+            public static readonly TimeSpan WhenNormal = new TimeSpan(0, 5, 0);
+            public static readonly TimeSpan WhenMaintenance = new TimeSpan(0, 10, 0);
         }
 
         public EQPoking()
@@ -45,45 +46,48 @@ namespace LeaDiscordBot.BotWrapper.Tasks
             };
             this.client.DefaultRequestHeaders.UserAgent.ParseAdd("KetgirlsOnryWithPermission");
             this.lastPokingStamp = DateTime.MinValue;
+
+            this.myTimer = new Timer(new TimerCallback(Timer_Callback), null, Timeout.Infinite, this.GetFixedDelay(FixedDlay.WhenNormal.Minutes).Milliseconds);
         }
 
-        public async Task StartPoking()
+        private void Timer_Callback(object state)
+        {
+            Console.WriteLine(DateTime.Now.ToString());
+            try
+            {
+                bool isInMaintenance = false;
+                var theTask = this.InnerPoking();
+                var internetResource = theTask.GetAwaiter().GetResult();
+                if (this.cancelling)
+                    return;
+                if (internetResource != null && internetResource.Count > 0)
+                {
+                    isInMaintenance = (bool)internetResource["Maintenance"];
+                    if (!isInMaintenance)
+                        this.EQDataChanged?.Invoke(this.MakeEmbed(internetResource));
+                }
+                if (this.cancelling)
+                    return;
+                if (!isInMaintenance)
+                    this.myTimer.Change(FixedDlay.WhenNormal, TimeSpan.Zero);
+                else
+                    this.myTimer.Change(FixedDlay.WhenMaintenance, TimeSpan.Zero);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        public void StartPoking()
         {
             if (this.IsRunning)
                 throw new InvalidOperationException();
             this._isbusy = true;
             this.cancelling = false;
-            
-            await Task.Factory.StartNew(async delegate {
-                bool isInMaintenance = false;
-                Dictionary<string, object> internetResource;
-                while (!this.cancelling)
-                {
-                    try
-                    {
-                        internetResource = await this.InnerPoking();
-                        if (this.cancelling)
-                            break;
-                        if (internetResource != null && internetResource.Count > 0)
-                        {
-                            isInMaintenance = (bool)internetResource["Maintenance"];
-                            if (!isInMaintenance)
-                                this.EQDataChanged?.Invoke(this.MakeEmbed(internetResource));
-                        }
-                        if (this.cancelling)
-                            break;
-                        if (!isInMaintenance)
-                            await Task.Delay(this.GetFixedDelay(FixedDlay.WhenNormal));
-                        else
-                            await Task.Delay(this.GetFixedDelay(FixedDlay.WhenMaintenance));
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-                }
-                this._isbusy = false;
-            }, TaskCreationOptions.LongRunning);
+
+            this.myTimer.Change(0, this.GetFixedDelay(FixedDlay.WhenNormal.Minutes).Milliseconds);
+
             Console.WriteLine("Started EQ poking.");
         }
 
@@ -92,6 +96,8 @@ namespace LeaDiscordBot.BotWrapper.Tasks
         public void CancelTask()
         {
             this.cancelling = true;
+            this._isbusy = false;
+            this.myTimer.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
         private async Task<Dictionary<string, object>> InnerPoking()
@@ -284,6 +290,14 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                         result.Add(currentPropertyname, reader.Value);
                 }
             return result;
+        }
+
+        public void Dispose()
+        {
+            if (this.myTimer != null)
+                this.myTimer.Dispose();
+            if (this.client != null)
+                this.client.Dispose();
         }
 
         public class EQDataChangedEventArgs : EventArgs

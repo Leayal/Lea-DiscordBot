@@ -36,7 +36,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
         public static async Task ProcessMessage(DiscordSocketClient client, SocketMessage message, IUser owner)
         {
             if (infoCache != null)
-                await message.Channel.SendMessageAsync("", false, infoCache);
+                await message.Channel.SendMessageAsync(string.Empty, false, infoCache);
         }
     }
 }

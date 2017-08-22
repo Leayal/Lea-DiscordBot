@@ -6,6 +6,7 @@ using Discord.WebSocket;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Leayal;
+using Discord;
 
 namespace LeaDiscordBot.BotWrapper.Cmds
 {
@@ -43,6 +44,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
 
         public async static Task Allow(Bot self, SocketMessage message)
         {
+            if (message.Source != MessageSource.User) return;
             if (!IsAllowed(message.Author))
                 await message.Channel.SendMessageAsync("You don't have permission to use this command.");
             else
@@ -74,6 +76,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
 
         public async static Task Disallow(Bot self, SocketMessage message)
         {
+            if (message.Source != MessageSource.User) return;
             if (!IsAllowed(message.Author))
                 await message.Channel.SendMessageAsync("You don't have permission to use this command.");
             else
@@ -105,6 +108,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
 
         public async static Task Add(SocketMessage message, IEnumerable<string> usernames)
         {
+            if (message.Source != MessageSource.User) return;
             if (!IsAllowed(message.Author))
             {
                 await message.Channel.SendMessageAsync("You don't have permission to use this command.");
@@ -149,6 +153,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
 
         public async static Task Add(SocketMessage message, params string[] usernames)
         {
+            if (message.Source != MessageSource.User) return;
             if (!IsAllowed(message.Author))
             {
                 await message.Channel.SendMessageAsync("You don't have permission to use this command.");
@@ -207,6 +212,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
 
         public async static Task Remove(SocketMessage message, IEnumerable< string > usernames)
         {
+            if (message.Source != MessageSource.User) return;
             if (!IsAllowed(message.Author))
             {
                 await message.Channel.SendMessageAsync("You don't have permission to use this command.");
@@ -251,6 +257,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
 
         public async static Task Remove(SocketMessage message, params string[] usernames)
         {
+            if (message.Source != MessageSource.User) return;
             if (!IsAllowed(message.Author))
             {
                 await message.Channel.SendMessageAsync("You don't have permission to use this command.");

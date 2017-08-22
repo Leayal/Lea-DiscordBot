@@ -40,6 +40,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
 
         public static async Task ProcessMessage(DiscordSocketClient client, SocketMessage message)
         {
+            if (message.Source != MessageSource.User) return;
             await message.Channel.SendMessageAsync(theHelp.Message, false, theHelp.Data);
 
             /*var dmChannel = await message.Author.CreateDMChannelAsync();

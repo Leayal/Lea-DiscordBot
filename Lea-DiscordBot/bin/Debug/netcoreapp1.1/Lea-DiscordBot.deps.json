@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v1.1",
-    "signature": "4b458afcb8e36c594187ee4594b0f2cc5e562cb6"
+    "signature": "a317b10aafb628bbaec3cc0ec3843bd00d98734f"
   },
   "compilationOptions": {},
   "targets": {
@@ -9,7 +9,7 @@
       "lea-discordbot/1.0.0": {
         "dependencies": {
           "Discord.Net": "1.0.1",
-          "Microsoft.IO.RecyclableMemoryStream": "1.0.0"
+          "Microsoft.IO.RecyclableMemoryStream": "1.2.2"
         },
         "runtime": {
           "Lea-DiscordBot.dll": {}
@@ -92,6 +92,11 @@
       "microsoft.extensions.dependencyinjection.abstractions/1.1.1": {
         "runtime": {
           "lib/netstandard1.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
+        }
+      },
+      "microsoft.io.recyclablememorystream/1.2.2": {
+        "runtime": {
+          "lib/netstandard1.4/Microsoft.IO.RecyclableMemoryStream.dll": {}
         }
       },
       "newtonsoft.json/10.0.2": {
@@ -180,11 +185,6 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XmlDocument.dll": {}
         }
-      },
-      "microsoft.io.recyclablememorystream/1.0.0": {
-        "runtime": {
-          "Microsoft.IO.RecyclableMemoryStream.dll": {}
-        }
       }
     }
   },
@@ -256,6 +256,13 @@
       "sha512": "sha512-O6j8Y889hZ4o1GIHotCyyN/XudkkHWpjpf2s4sZdSzvhNVdRPDWTnwU6fTYluJGrR0fgc19I4HPBLEz5enY/wA==",
       "path": "microsoft.extensions.dependencyinjection.abstractions/1.1.1",
       "hashPath": "microsoft.extensions.dependencyinjection.abstractions.1.1.1.nupkg.sha512"
+    },
+    "microsoft.io.recyclablememorystream/1.2.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-LA4RBTStohA0hAAs6oKchmIC5M5Mjd5MwfB7vbbl+312N5kXj8abTGOgwZy6ASJYLCiqiiK5kHS0hDGEgfkB8g==",
+      "path": "microsoft.io.recyclablememorystream/1.2.2",
+      "hashPath": "microsoft.io.recyclablememorystream.1.2.2.nupkg.sha512"
     },
     "newtonsoft.json/10.0.2": {
       "type": "package",
@@ -340,11 +347,6 @@
       "sha512": "sha512-lJ8AxvkX7GQxpC6GFCeBj8ThYVyQczx2+f/cWHJU8tjS7YfI6Cv6bon70jVEgs2CiFbmmM8b9j1oZVx0dSI2Ww==",
       "path": "system.xml.xmldocument/4.3.0",
       "hashPath": "system.xml.xmldocument.4.3.0.nupkg.sha512"
-    },
-    "microsoft.io.recyclablememorystream/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
     }
   }
 }

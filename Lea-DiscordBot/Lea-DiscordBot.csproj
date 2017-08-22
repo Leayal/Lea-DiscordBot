@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>LeaDiscordBot</RootNamespace>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="BotWrapper\Cmds\Exec.cs" />
     <Compile Remove="BotWrapper\Orders\Warn.cs" />
   </ItemGroup>
 
@@ -33,15 +34,12 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.1" />
+    <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="1.2.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="BotWrapper\Orders\" />
     <Folder Include="Leayal\Ini\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Microsoft.IO.RecyclableMemoryStream\Microsoft.IO.RecyclableMemoryStream.csproj" />
   </ItemGroup>
 
   <ItemGroup>

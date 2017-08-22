@@ -104,7 +104,7 @@ namespace LeaDiscordBot.BotWrapper
             }
 
             if (this.launchEQPoking)
-                await this.poooooookkeeeee.StartPoking();
+                this.poooooookkeeeee.StartPoking();
         }
 
         private async Task Poooooookkeeeee_EQDataChanged(Tasks.EQPoking.EQPostBlock arg)
@@ -188,7 +188,7 @@ namespace LeaDiscordBot.BotWrapper
                     if (message.Content.Length > 1 && message.Content.IndexOf(this._commandPrefix) == 0)
                     {
                         // Remove the command prefix and start to parse the command
-                        string[] splittedMsg = message.Content.Remove(0, 1).Split(new char[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+                        string[] splittedMsg = message.Content.Remove(0, 1).Split(new string[] { " ", "\r\n", "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
                         // Someone ordered me to do something ???
                         switch(splittedMsg[0].ToLower())
                         {
@@ -296,6 +296,8 @@ namespace LeaDiscordBot.BotWrapper
 
         public void Dispose()
         {
+            if (this.poooooookkeeeee != null)
+                this.poooooookkeeeee.Dispose();
             this._client.Dispose();
         }
     }

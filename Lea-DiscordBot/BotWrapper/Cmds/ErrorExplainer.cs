@@ -8,6 +8,7 @@ namespace LeaDiscordBot.BotWrapper.Cmds
     {
         public static async Task ProcessMessage(DiscordSocketClient client, SocketMessage message, string cmdPrefix, params string[] splittedMsg)
         {
+            if (message.Source != MessageSource.User) return;
             if (splittedMsg.Length > 1)
             {
                 for (int i = 1; i < splittedMsg.Length; i++)
