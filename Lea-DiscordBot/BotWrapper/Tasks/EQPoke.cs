@@ -153,12 +153,6 @@ namespace LeaDiscordBot.BotWrapper.Tasks
             //EmbedBuilder budiler = new EmbedBuilder();
             // Let's hope the markdown work here
             StringBuilder sb = new StringBuilder();
-            string creditLine = Program.ConfigFile.GetValue("EQ", "CreditMessage", string.Empty);
-            if (!string.IsNullOrWhiteSpace(creditLine))
-            {
-                sb.AppendFormat("***{0}***", creditLine);
-                sb.Append('\n');
-            }
             string value;
             // OK, rewrite this, or not
             int offsetHeader = 0;
@@ -252,7 +246,12 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                     sb.Insert(offsetHeader, "Up coming random EQ at " + (string)rawlist["JST"] + " JST:\n");
             }
 
-            return new EQPostBlock(sb.ToString());
+            string creditLine = Program.ConfigFile.GetValue("EQ", "CreditMessage", string.Empty);
+            return new EQPostBlock(string.IsNullOrWhiteSpace(creditLine) ? 
+                sb.ToString() 
+                : 
+                string.Format("***{0}***\n", creditLine) + sb.ToString()
+                );
         }
 
         private string GetClockEmoji(DateTime dt)
@@ -277,7 +276,10 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                 return new TimeSpan(0, result - current.Minute, 0);
         }
 
-        protected abstract Dictionary<string, object> ReadValueFromServer(Stream jsonStream);
+        protected virtual Dictionary<string, object> ReadValueFromServer(Stream jsonStream)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Dispose()
         {
