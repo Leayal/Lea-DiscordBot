@@ -4,7 +4,6 @@ using System.Threading;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.IO;
 using Discord;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace LeaDiscordBot.BotWrapper.Tasks
     /// <summary>
     /// This class is for the game Phantasy Star Online 2's EQ Notification. If you don't know about the game or no need to use this. You can use the bot settings to disable.
     /// </summary>
-    public class EQPoking : IDisposable
+    public abstract class EQPoke : IDisposable
     {
         private HttpClient client;
         public Uri PokingURL { get; set; }
@@ -30,7 +29,7 @@ namespace LeaDiscordBot.BotWrapper.Tasks
             public static readonly TimeSpan WhenMaintenance = new TimeSpan(0, 10, 0);
         }
 
-        public EQPoking()
+        public EQPoke()
         {
             this._isbusy = false;
             this.client = new HttpClient(new HttpClientHandler()
@@ -39,12 +38,21 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                 Proxy = null,
                 AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
             });
-            this.PokingURL = new Uri("https://pso2.acf.me.uk/api/eq.json");
+            string value = Program.ConfigFile.GetValue("EQ", "Server", string.Empty);
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentNullException("URL cannot be null. Please disable LaunchEQAtStart at setting or set this Server setting.");
+            this.PokingURL = new Uri(value);
             this.client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue()
             {
                 NoCache = true
             };
-            this.client.DefaultRequestHeaders.UserAgent.ParseAdd("KetgirlsOnryWithPermission");
+            string useragent = Program.ConfigFile.GetValue("EQ", "UserAgent", string.Empty);
+            if (!string.IsNullOrWhiteSpace(useragent))
+                this.client.DefaultRequestHeaders.UserAgent.ParseAdd(useragent);
+            string username = Program.ConfigFile.GetValue("EQ", "Username", string.Empty),
+                pass = Program.ConfigFile.GetValue("EQ", "Password", string.Empty);
+            if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(pass))
+                this.client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{pass}")));
             this.lastPokingStamp = DateTime.MinValue;
 
             this.myTimer = new Timer(new TimerCallback(Timer_Callback), null, Timeout.Infinite, this.GetFixedDelay(FixedDlay.WhenNormal.Minutes).Milliseconds);
@@ -126,7 +134,7 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                             this.lastPokingStamp = rep.Content.Headers.LastModified.Value.UtcDateTime;
                             // We may not even need the JObject
                             using (var stream = await rep.Content.ReadAsStreamAsync())
-                                result = this.FlattenJson(stream);
+                                result = this.ReadValueFromServer(stream);
                             /* bool hasAnyValue = flattenJson
                                 .Where((_keypair)=> { return (_keypair.Key != "JST" && _keypair.Key != "Maintenance"); })
                                 .Any((_keypair) => { return (_keypair.Value != null); });//*/
@@ -134,7 +142,7 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                     }
                     else
                         using (var stream = await rep.Content.ReadAsStreamAsync())
-                            result = this.FlattenJson(stream);
+                            result = this.ReadValueFromServer(stream);
                 }
             }
             return result;
@@ -263,34 +271,7 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                 return new TimeSpan(0, result - current.Minute, 0);
         }
 
-        private Dictionary<string, object> FlattenJson(Stream jsonStream)
-        {
-            using (StreamReader sr = new StreamReader(jsonStream))
-            using (JsonTextReader jtr = new JsonTextReader(sr))
-                return this.FlattenJson(jtr);
-        }
-
-        private Dictionary<string, object> FlattenJson(string jsonContent)
-        {
-            using (StringReader sr = new StringReader(jsonContent))
-            using (JsonTextReader jtr = new JsonTextReader(sr))
-                return this.FlattenJson(jtr);
-        }
-
-        private Dictionary<string, object> FlattenJson(JsonReader reader)
-        {
-            Dictionary<string, object> result = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-            string currentPropertyname = null;
-            while (reader.Read())
-                if (reader.TokenType == JsonToken.PropertyName)
-                {
-                    // Since this is a flat JSON, this is safe
-                    currentPropertyname = reader.Value as string;
-                    if (reader.Read())
-                        result.Add(currentPropertyname, reader.Value);
-                }
-            return result;
-        }
+        protected abstract Dictionary<string, object> ReadValueFromServer(Stream jsonStream);
 
         public void Dispose()
         {

@@ -13,7 +13,7 @@ namespace LeaDiscordBot.BotWrapper
         public DiscordSocketClient Client => this._client;
         private string _commandPrefix;
         public string CommandPrefix => this._commandPrefix;
-        private Tasks.EQPoking poooooookkeeeee;
+        private Tasks.EQPoke poooooookkeeeee;
         private bool launchEQPoking;
         public CommandCooldown CommandCooldown { get; }
 

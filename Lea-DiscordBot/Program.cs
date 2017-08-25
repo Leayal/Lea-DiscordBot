@@ -9,7 +9,7 @@ namespace LeaDiscordBot
         public static Microsoft.IO.RecyclableMemoryStreamManager memoryMgr = new Microsoft.IO.RecyclableMemoryStreamManager();
         private static BotWrapper.Bot myBot;
         private static Leayal.Ini.IniFile _configFile;
-        private static Leayal.Ini.IniFile ConfigFile
+        internal static Leayal.Ini.IniFile ConfigFile
         {
             get
             {
@@ -90,11 +90,15 @@ namespace LeaDiscordBot
             Console.WriteLine("Choose setting:");
             Console.WriteLine("1. Set Bot token");
             Console.WriteLine("2. Set Bot prefix");
-            Console.WriteLine("3. Launch EQ Alert along with the bot");
+            Console.WriteLine("3. Change. Launch EQ Alert along with the bot???");
+            Console.WriteLine("4. Set EQ Server for the bot to leech or crawl or laihgliawhgliawhgilahwglih.");
+            Console.WriteLine("5. Set UserAgent will be used for EQ's requests.");
+            Console.WriteLine("6. Set Username will be used for EQ's requests.");
+            Console.WriteLine("7. Set Password will be used for EQ's requests.");
             Console.WriteLine();
             Console.WriteLine("0. Back to main menu");
             Console.Write("Press the number without pressing enter: ");
-            ConsoleKeyInfo ki = AwaitingOrder(false, '0', '1', '2', '3');
+            ConsoleKeyInfo ki = AwaitingOrder(false, '0', '1', '2', '3', '4', '5', '6', '7');
             switch (ki.KeyChar)
             {
                 case '0':
@@ -168,6 +172,102 @@ namespace LeaDiscordBot
                     {
                         Console.Clear();
                         Console.WriteLine("Command prefix settings cancelled");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    break;
+                case '4':
+                    Console.Clear();
+                    Console.WriteLine("Please leave the Bot's EQ server url below and then press Enter to confirm... or press Esc to cancel:");
+                    //Tricky ???
+                    StringBuilder sb4 = new StringBuilder();
+                    if (ConsoleReadline(sb4) != null)
+                    {
+                        ConfigFile.SetValue("EQ", "Server", sb4.ToString());
+                        ConfigFile.Save();
+                        Console.Clear();
+                        Console.WriteLine("Config saved.");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine("EQ Server settings cancelled");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    break;
+                case '5':
+                    Console.Clear();
+                    Console.WriteLine("Please leave the Bot's useragent below and then press Enter to confirm... or press Esc to cancel:");
+                    //Tricky ???
+                    StringBuilder sb5 = new StringBuilder();
+                    if (ConsoleReadline(sb5) != null)
+                    {
+                        ConfigFile.SetValue("EQ", "UserAgent", sb5.ToString());
+                        ConfigFile.Save();
+                        Console.Clear();
+                        Console.WriteLine("Config saved.");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine("EQ Server settings cancelled");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    break;
+                case '6':
+                    Console.Clear();
+                    Console.WriteLine("Please leave the Bot's Authorize info (Username) below and then press Enter to confirm... or press Esc to cancel:");
+                    //Tricky ???
+                    StringBuilder sb6 = new StringBuilder();
+                    if (ConsoleReadline(sb6) != null)
+                    {
+                        ConfigFile.SetValue("EQ", "Username", sb6.ToString());
+                        ConfigFile.Save();
+                        Console.Clear();
+                        Console.WriteLine("Config saved.");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine("EQ Server settings cancelled");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    break;
+                case '7':
+                    Console.Clear();
+                    Console.WriteLine("Please leave the Bot's Authorize info (Password) below and then press Enter to confirm... or press Esc to cancel:");
+                    //Tricky ???
+                    StringBuilder sb7 = new StringBuilder();
+                    if (ConsoleReadline(sb7) != null)
+                    {
+                        ConfigFile.SetValue("EQ", "Password", sb7.ToString());
+                        ConfigFile.Save();
+                        Console.Clear();
+                        Console.WriteLine("Config saved.");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine("EQ Server settings cancelled");
                         Console.WriteLine("Press any key to go back");
                         AwaitingOrder(false, null);
                         LaunchConfigPanel();
