@@ -179,6 +179,7 @@ namespace LeaDiscordBot
                     break;
                 case '4':
                     Console.Clear();
+                    Console.WriteLine("If you don't own the the EQ Server or use someone. Put Credits (Please read here).");
                     Console.WriteLine("Please leave the Bot's EQ server url below and then press Enter to confirm... or press Esc to cancel:");
                     //Tricky ???
                     StringBuilder sb4 = new StringBuilder();
