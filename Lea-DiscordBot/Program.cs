@@ -51,7 +51,7 @@ namespace LeaDiscordBot
                             string cmdPrefix = ConfigFile.GetValue("Bot", "CommandPrefix", string.Empty);
                             string launchEQPoking = ConfigFile.GetValue("Bot", "LaunchEQAfterLogin", string.Empty);
                             if (string.IsNullOrWhiteSpace(launchEQPoking))
-                                launchEQPoking = "1";
+                                launchEQPoking = "0";
                             if (string.IsNullOrWhiteSpace(cmdPrefix))
                                 cmdPrefix = "'";
                             MainAsync(cmdPrefix, myKey, !Leayal.StringHelper.IsEqual(launchEQPoking, "0")).GetAwaiter().GetResult();
