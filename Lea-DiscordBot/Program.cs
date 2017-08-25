@@ -95,10 +95,11 @@ namespace LeaDiscordBot
             Console.WriteLine("5. Set UserAgent will be used for EQ's requests.");
             Console.WriteLine("6. Set Username will be used for EQ's requests.");
             Console.WriteLine("7. Set Password will be used for EQ's requests.");
+            Console.WriteLine("8. Set Credits line EQ's notification.");
             Console.WriteLine();
             Console.WriteLine("0. Back to main menu");
             Console.Write("Press the number without pressing enter: ");
-            ConsoleKeyInfo ki = AwaitingOrder(false, '0', '1', '2', '3', '4', '5', '6', '7');
+            ConsoleKeyInfo ki = AwaitingOrder(false, '0', '1', '2', '3', '4', '5', '6', '7', '8');
             switch (ki.KeyChar)
             {
                 case '0':
@@ -204,7 +205,7 @@ namespace LeaDiscordBot
                     break;
                 case '5':
                     Console.Clear();
-                    Console.WriteLine("Please leave the Bot's useragent below and then press Enter to confirm... or press Esc to cancel:");
+                    Console.WriteLine("Please leave the Bot's useragent below and then press Enter to confirm... or press Esc to cancel. Whitespace to remove:");
                     //Tricky ???
                     StringBuilder sb5 = new StringBuilder();
                     if (ConsoleReadline(sb5) != null)
@@ -228,7 +229,7 @@ namespace LeaDiscordBot
                     break;
                 case '6':
                     Console.Clear();
-                    Console.WriteLine("Please leave the Bot's Authorize info (Username) below and then press Enter to confirm... or press Esc to cancel:");
+                    Console.WriteLine("Please leave the Bot's Authorize info (Username) below and then press Enter to confirm... or press Esc to cancel. Whitespace to remove:");
                     //Tricky ???
                     StringBuilder sb6 = new StringBuilder();
                     if (ConsoleReadline(sb6) != null)
@@ -252,12 +253,37 @@ namespace LeaDiscordBot
                     break;
                 case '7':
                     Console.Clear();
-                    Console.WriteLine("Please leave the Bot's Authorize info (Password) below and then press Enter to confirm... or press Esc to cancel:");
+                    Console.WriteLine("Please leave the Bot's Authorize info (Password) below and then press Enter to confirm... or press Esc to cancel. Whitespace to remove:");
                     //Tricky ???
                     StringBuilder sb7 = new StringBuilder();
                     if (ConsoleReadline(sb7) != null)
                     {
                         ConfigFile.SetValue("EQ", "Password", sb7.ToString());
+                        ConfigFile.Save();
+                        Console.Clear();
+                        Console.WriteLine("Config saved.");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine("EQ Server settings cancelled");
+                        Console.WriteLine("Press any key to go back");
+                        AwaitingOrder(false, null);
+                        LaunchConfigPanel();
+                    }
+                    break;
+                case '8':
+                    Console.Clear();
+                    Console.WriteLine("If you don't own the the EQ Server or use someone. Put Credits.");
+                    Console.WriteLine("Please leave the credits message below and then press Enter to confirm... or press Esc to cancel. Leave whitespace to remove:");
+                    //Tricky ???
+                    StringBuilder sb8 = new StringBuilder();
+                    if (ConsoleReadline(sb8) != null)
+                    {
+                        ConfigFile.SetValue("EQ", "CreditMessage", sb8.ToString());
                         ConfigFile.Save();
                         Console.Clear();
                         Console.WriteLine("Config saved.");

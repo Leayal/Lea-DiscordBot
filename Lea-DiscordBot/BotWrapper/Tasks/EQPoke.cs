@@ -153,6 +153,12 @@ namespace LeaDiscordBot.BotWrapper.Tasks
             //EmbedBuilder budiler = new EmbedBuilder();
             // Let's hope the markdown work here
             StringBuilder sb = new StringBuilder();
+            string creditLine = Program.ConfigFile.GetValue("EQ", "CreditMessage", string.Empty);
+            if (!string.IsNullOrWhiteSpace(creditLine))
+            {
+                sb.Append(creditLine);
+                sb.Append('\n');
+            }
             string value;
             // OK, rewrite this, or not
             int offsetHeader = 0;
