@@ -156,7 +156,7 @@ namespace LeaDiscordBot.BotWrapper.Tasks
             string creditLine = Program.ConfigFile.GetValue("EQ", "CreditMessage", string.Empty);
             if (!string.IsNullOrWhiteSpace(creditLine))
             {
-                sb.Append(creditLine);
+                sb.AppendFormat("***{0}***", creditLine);
                 sb.Append('\n');
             }
             string value;
