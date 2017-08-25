@@ -109,7 +109,7 @@ namespace LeaDiscordBot
                     Console.Clear();
                     Console.WriteLine("Please leave the Bot's token below and then press Enter to confirm... or press Esc to cancel:");
                     //Tricky ???
-                    StringBuilder sb1 = new StringBuilder();
+                    Leayal.WeirdStringBuilder sb1 = new Leayal.WeirdStringBuilder();
                     if (ConsoleReadline(sb1) != null)
                     {
                         ConfigFile.SetValue("Bot", "Token", sb1.ToString());
@@ -158,7 +158,7 @@ namespace LeaDiscordBot
                     Console.Clear();
                     Console.WriteLine("Please leave the string below and then press Enter to confirm... or press Esc to cancel:");
                     //Tricky ???
-                    StringBuilder sb3 = new StringBuilder();
+                    Leayal.WeirdStringBuilder sb3 = new Leayal.WeirdStringBuilder();
                     if (ConsoleReadline(sb3) != null)
                     {
                         ConfigFile.SetValue("Bot", "CommandPrefix", sb3.ToString());
@@ -183,7 +183,7 @@ namespace LeaDiscordBot
                     Console.WriteLine("If you don't own the the EQ Server or use someone. Put Credits (Please read here).");
                     Console.WriteLine("Please leave the Bot's EQ server url below and then press Enter to confirm... or press Esc to cancel:");
                     //Tricky ???
-                    StringBuilder sb4 = new StringBuilder();
+                    Leayal.WeirdStringBuilder sb4 = new Leayal.WeirdStringBuilder();
                     if (ConsoleReadline(sb4) != null)
                     {
                         ConfigFile.SetValue("EQ", "Server", sb4.ToString());
@@ -207,7 +207,7 @@ namespace LeaDiscordBot
                     Console.Clear();
                     Console.WriteLine("Please leave the Bot's useragent below and then press Enter to confirm... or press Esc to cancel. Whitespace to remove:");
                     //Tricky ???
-                    StringBuilder sb5 = new StringBuilder();
+                    Leayal.WeirdStringBuilder sb5 = new Leayal.WeirdStringBuilder();
                     if (ConsoleReadline(sb5) != null)
                     {
                         ConfigFile.SetValue("EQ", "UserAgent", sb5.ToString());
@@ -231,7 +231,7 @@ namespace LeaDiscordBot
                     Console.Clear();
                     Console.WriteLine("Please leave the Bot's Authorize info (Username) below and then press Enter to confirm... or press Esc to cancel. Whitespace to remove:");
                     //Tricky ???
-                    StringBuilder sb6 = new StringBuilder();
+                    Leayal.WeirdStringBuilder sb6 = new Leayal.WeirdStringBuilder();
                     if (ConsoleReadline(sb6) != null)
                     {
                         ConfigFile.SetValue("EQ", "Username", sb6.ToString());
@@ -255,7 +255,7 @@ namespace LeaDiscordBot
                     Console.Clear();
                     Console.WriteLine("Please leave the Bot's Authorize info (Password) below and then press Enter to confirm... or press Esc to cancel. Whitespace to remove:");
                     //Tricky ???
-                    StringBuilder sb7 = new StringBuilder();
+                    Leayal.WeirdStringBuilder sb7 = new Leayal.WeirdStringBuilder();
                     if (ConsoleReadline(sb7) != null)
                     {
                         ConfigFile.SetValue("EQ", "Password", sb7.ToString());
@@ -280,7 +280,7 @@ namespace LeaDiscordBot
                     Console.WriteLine("If you don't own the the EQ Server or use someone. Put Credits.");
                     Console.WriteLine("Please leave the credits message below and then press Enter to confirm... or press Esc to cancel. Leave whitespace to remove:");
                     //Tricky ???
-                    StringBuilder sb8 = new StringBuilder();
+                    Leayal.WeirdStringBuilder sb8 = new Leayal.WeirdStringBuilder();
                     if (ConsoleReadline(sb8) != null)
                     {
                         ConfigFile.SetValue("EQ", "CreditMessage", sb8.ToString());
@@ -303,7 +303,7 @@ namespace LeaDiscordBot
             }
         }
 
-        private static StringBuilder ConsoleReadline(StringBuilder sb)
+        private static Leayal.WeirdStringBuilder ConsoleReadline(Leayal.WeirdStringBuilder sb)
         {
             var pressedKey = Console.ReadKey(false);
             switch(pressedKey.Key)
@@ -312,6 +312,12 @@ namespace LeaDiscordBot
                     return sb;
                 case ConsoleKey.Escape:
                     return null;
+                case ConsoleKey.Backspace:
+                    sb.Backspace();
+                    return ConsoleReadline(sb);
+                case ConsoleKey.Delete:
+                    sb.Delete();
+                    return ConsoleReadline(sb);
                 default:
                     sb.Append(pressedKey.KeyChar);
                     return ConsoleReadline(sb);
