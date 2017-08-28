@@ -156,7 +156,7 @@ namespace LeaDiscordBot.BotWrapper.Tasks
             string value;
             // OK, rewrite this, or not
             int offsetHeader = 0;
-            value = rawlist["Now"] as string;
+            value = rawlist["0"] as string;
             if (!string.IsNullOrEmpty(value))
             {
                 sb.AppendFormat("\n:on: Currently on going: ```{0}```", value);
@@ -164,21 +164,21 @@ namespace LeaDiscordBot.BotWrapper.Tasks
             }
             DateTime anotherCurrentDateTime = DateTime.UtcNow;
             // 00:30m
-            value = rawlist["HalfHour"] as string;
+            value = rawlist["30"] as string;
             if (!string.IsNullOrEmpty(value))
             {
                 anotherCurrentDateTime.AddMinutes(30d);
                 sb.AppendFormat("\n:soon: In half hour: `{0}`", value);
             }
             // 01:00m
-            value = rawlist["OneLater"] as string;
+            value = rawlist["60"] as string;
             if (!string.IsNullOrEmpty(value))
             {
                 anotherCurrentDateTime.AddHours(1d);
                 sb.AppendFormat("\n{0} In one hour: `{1}`", this.GetClockEmoji(anotherCurrentDateTime), value);
             }
             // 01:30m
-            value = rawlist["OneHalfLater"] as string;
+            value = rawlist["90"] as string;
             if (!string.IsNullOrEmpty(value))
             {
                 anotherCurrentDateTime.AddHours(1d);
@@ -186,14 +186,14 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                 sb.AppendFormat("\n{0} In one and half hour: `{1}`", this.GetClockEmoji(anotherCurrentDateTime), value);
             }
             // 02:00m
-            value = rawlist["TwoLater"] as string;
+            value = rawlist["120"] as string;
             if (!string.IsNullOrEmpty(value))
             {
                 anotherCurrentDateTime.AddHours(2d);
                 sb.AppendFormat("\n{0} In two hour: `{1}`", this.GetClockEmoji(anotherCurrentDateTime), value);
             }
             // 02:30m
-            value = rawlist["TwoHalfLater"] as string;
+            value = rawlist["150"] as string;
             if (!string.IsNullOrEmpty(value))
             {
                 anotherCurrentDateTime.AddHours(2d);
@@ -201,14 +201,14 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                 sb.AppendFormat("\n{0} In two and half hour: `{1}`", this.GetClockEmoji(anotherCurrentDateTime), value);
             }
             // 03:00m
-            value = rawlist["ThreeLater"] as string;
+            value = rawlist["180"] as string;
             if (!string.IsNullOrEmpty(value))
             {
                 anotherCurrentDateTime.AddHours(3d);
                 sb.AppendFormat("\n{0} In three hour: `{1}`", this.GetClockEmoji(anotherCurrentDateTime), value);
             }
             // 03:30m
-            value = rawlist["ThreeHalfLater"] as string;
+            value = rawlist["210"] as string;
             if (!string.IsNullOrEmpty(value))
             {
                 anotherCurrentDateTime.AddHours(3d);
@@ -243,14 +243,14 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                     }
                 }
                 if (!string.IsNullOrWhiteSpace(sb.ToString()) && !firstline)
-                    sb.Insert(offsetHeader, "Up coming random EQ at " + (string)rawlist["JST"] + " JST:\n");
+                    sb.Insert(offsetHeader, "Up coming random EQ " + (string)rawlist["Hour"] + ":\n");
             }
 
             string creditLine = Program.ConfigFile.GetValue("EQ", "CreditMessage", string.Empty);
-            return new EQPostBlock(string.IsNullOrWhiteSpace(creditLine) ? 
-                sb.ToString() 
-                : 
+            return new EQPostBlock(((sb.Length > 0) && !string.IsNullOrWhiteSpace(creditLine)) ? 
                 string.Format("***{0}***\n", creditLine) + sb.ToString()
+                :
+                sb.ToString()
                 );
         }
 
@@ -276,7 +276,7 @@ namespace LeaDiscordBot.BotWrapper.Tasks
                 return new TimeSpan(0, result - current.Minute, 0);
         }
 
-        protected virtual Dictionary<string, object> ReadValueFromServer(Stream jsonStream)
+        protected virtual Dictionary<string, object> ReadValueFromServer(Stream sourceStream)
         {
             throw new NotImplementedException();
         }
